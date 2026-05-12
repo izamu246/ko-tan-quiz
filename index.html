@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -655,36 +662,80 @@ function setStatusBar(show, msg, pct, done, error){
 
 // 起動時強制リセット＆再取得
 function autoRefreshData(){
-  if(!navigator.onLine){
-    // オフライン：既存キャッシュから復元して使用
+  // 3日以内のキャッシュがあればオフライン・オンライン問わずキャッシュ優先
+  const _now=new Date().getTime();
+  let _saved=null;
+  try{_saved=localStorage.getItem('_qdc');}catch(e){}
+  const _age=_saved?(_now-parseInt(_saved)):Infinity;
+  const _hasCacheData=(()=>{try{return !!localStorage.getItem('quizData');}catch(e){return false;}})();
+
+  if(_age<3*24*60*60*1000 && _hasCacheData){
+    // 3日以内かつキャッシュあり→キャッシュ優先
     const ok=restoreDataFromStorage();
     if(ok){
       buildYearButtons();
-      setStatusBar(true,'オフラインモード：保存済みデータで動作中',100,true,false);
-      setTimeout(()=>setStatusBar(false),3000);
+      if(!navigator.onLine){
+        setStatusBar(true,'オフラインモード：保存済みデータで動作中',100,true,false);
+        setTimeout(()=>setStatusBar(false),3000);
+      }else{
+        setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
+        setTimeout(()=>setStatusBar(false),2000);
+      }
+      return;
+    }
+  }
+
+  // キャッシュ切れまたはキャッシュなし
+  if(!navigator.onLine){
+    const ok=restoreDataFromStorage();
+    if(ok){
+      buildYearButtons();
+      setStatusBar(true,'オフライン：保存済みデータで動作中（更新は次回オンライン時）',100,false,true);
     }else{
       setStatusBar(true,'オフライン：データがありません。一度オンラインで起動してください',100,false,true);
     }
     return;
   }
 
-  // オンライン：キャッシュクリアして最新を取得
-  setStatusBar(true,'最新データを取得中...',10);
-  // quizDataと画像キャッシュを全クリア
-  try{
-    localStorage.removeItem('quizData');
-    // quizImgCache_* を全削除
-    const keys=Object.keys(localStorage).filter(k=>k.startsWith('quizImgCache_'));
-    keys.forEach(k=>localStorage.removeItem(k));
-  }catch(e){}
+  // オンライン＋キャッシュ切れ→最新を取得（ファイル名チェック付き）
+  setStatusBar(true,'最新データを確認中...',10);
 
-  fetchLatestExcel()
-    .then(r=>{
-      if(!r.ok)throw new Error('取得失敗('+r.status+')');
-      setStatusBar(true,'データ受信中...',40);
-      return r.arrayBuffer();
+  // まずGitHubのファイル名だけ確認して新しいExcelがあるかチェック
+  fetch(_GH_API)
+    .then(r=>{if(!r.ok)throw new Error('API失敗');return r.json();})
+    .then(files=>{
+      const xlsx=files
+        .filter(f=>f.type==='file'&&/^工事担任者問題\d+\.xlsx$/i.test(f.name))
+        .sort((a,b)=>b.name.localeCompare(a.name));
+      if(!xlsx.length)throw new Error('Excelが見つかりません');
+      const latestName=xlsx[0].name;
+      const cachedName=localStorage.getItem('_qfn')||'';
+      // ファイル名が同じ＆3日以内→キャッシュ継続
+      if(latestName===cachedName&&_hasCacheData&&_age<3*24*60*60*1000){
+        const ok=restoreDataFromStorage();
+        if(ok){
+          buildYearButtons();
+          setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
+          setTimeout(()=>setStatusBar(false),2000);
+          return;
+        }
+      }
+      // 新しいExcelがある or キャッシュ切れ→クリアして取得
+      setStatusBar(true,'新しいデータを取得中...',20);
+      try{
+        localStorage.removeItem('quizData');
+        const keys=Object.keys(localStorage).filter(k=>k.startsWith('quizImgCache_'));
+        keys.forEach(k=>localStorage.removeItem(k));
+      }catch(e){}
+      return fetch(_GH_RAW+latestName)
+        .then(r=>{if(!r.ok)throw new Error('取得失敗('+r.status+')');
+          setStatusBar(true,'データ受信中...',40);
+          return r.arrayBuffer().then(buf=>({buf,name:latestName}));
+        });
     })
-    .then(buf=>{
+    .then(res=>{
+      if(!res)return;
+      const {buf,name}=res;
       setStatusBar(true,'データを解析中...',65);
       const data=new Uint8Array(buf);
       const wb=XLSX.read(data,{type:'array'});
@@ -693,7 +744,11 @@ function autoRefreshData(){
       if(!rows||rows.length===0)throw new Error('データが空です');
       QUESTIONS.length=0;
       rows.forEach(r=>QUESTIONS.push(r));
-      try{localStorage.setItem('quizData',JSON.stringify(QUESTIONS));}catch(e){console.warn('保存失敗:',e);}
+      try{
+        localStorage.setItem('quizData',JSON.stringify(QUESTIONS));
+        localStorage.setItem('_qdc',String(new Date().getTime()));
+        localStorage.setItem('_qfn',name);
+      }catch(e){console.warn('保存失敗:',e);}
       buildYearButtons();
       setStatusBar(true,QUESTIONS.length+'問を取得しました。画像をキャッシュ中...',85);
       cacheAllImages();
@@ -703,7 +758,6 @@ function autoRefreshData(){
       },500);
     })
     .catch(err=>{
-      // 取得失敗時はキャッシュから復元を試みる
       const ok=restoreDataFromStorage();
       if(ok){
         buildYearButtons();
