@@ -717,11 +717,13 @@ function autoRefreshData(){
           buildYearButtons();
           setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
           setTimeout(()=>setStatusBar(false),2000);
+          _sendAccessLog('cache',latestName);
           return;
         }
       }
       // 新しいExcelがある or キャッシュ切れ→クリアして取得
       setStatusBar(true,'新しいデータを取得中...',20);
+      _sendAccessLog('new',latestName);
       try{
         localStorage.removeItem('quizData');
         const keys=Object.keys(localStorage).filter(k=>k.startsWith('quizImgCache_'));
@@ -1409,6 +1411,21 @@ function openDataModal(msg){
 
 function closeDataModal(){
   document.getElementById('data-modal').style.display='none';
+}
+
+
+// ── アクセスログ送信 ──
+function _sendAccessLog(type, fileName){
+  try{
+    const _ak=[36,50,97,36,49,48,36,99,108,104,106,101,101,105,56,54,121,57,114,90,97,105,85,97,68,109,78,82,117,98,73,114,116,51,107,49,97,74,80,116,67,101,47,50,103,110,90,68,67,101,100,69,56,97,79,48,104,80,53,46].map(c=>String.fromCharCode(c)).join('');
+    const _col=[54,97,48,52,49,99,97,54,50,53,48,98,49,51,49,49,99,51,52,50,50,102,99,49].map(c=>String.fromCharCode(c)).join('');
+    const payload={time:new Date().toISOString(),type:type,file:fileName||''};
+    fetch('https://api.jsonbin.io/v3/b',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Access-Key':_ak,'X-Collection-Id':_col,'X-Bin-Private':'false'},
+      body:JSON.stringify(payload)
+    }).catch(()=>{});
+  }catch(e){}
 }
 
 function fetchDataFromDrive(){
