@@ -680,6 +680,7 @@ function autoRefreshData(){
       }else{
         setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
         setTimeout(()=>setStatusBar(false),2000);
+        _sendAccessLog('cache','');
       }
       return;
     }
@@ -960,7 +961,7 @@ function renderQuestion(){
     choiceItems.push({origIdx:i,txt,ci});
   }
   // シャッフル
-  const shuffledChoices=shuffle(choiceItems);
+  const shuffledChoices=q['fixed_order']?choiceItems:shuffle(choiceItems);
   // シャッフル後の正解の表示番号を記録
   const correctOrig=parseInt(q['正解番号']);
   let displayCorrectNum=1;
