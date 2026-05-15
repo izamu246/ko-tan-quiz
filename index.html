@@ -577,7 +577,32 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     document.getElementById('error-msg').textContent='E001';
     throw new Error('E1');
   }
-  _n5.innerHTML='Presented<br>by <strong style="letter-spacing:1px;">'+_m1+'</strong>';
+  _n5.innerHTML='Presented<br>by <strong style="letter-spacing:1px;">'+_m1+'</strong><div id="debug-tap" style="width:100%;height:24px;cursor:default;"></div>';
+  // デバッグ：5回連続タップでログ送信テスト
+  (function(){
+    var _tc=0,_tt=0;
+    document.getElementById('debug-tap').addEventListener('click',function(){
+      var _now=Date.now();
+      if(_now-_tt>2000)_tc=0;
+      _tt=_now;
+      _tc++;
+      if(_tc>=5){
+        _tc=0;
+        // ログ送信テスト
+        var _ak=[36,50,97,36,49,48,36,47,101,67,80,52,57,117,46,119,57,71,115,109,74,83,78,118,70,70,90,98,46,56,98,85,73,115,99,111,101,56,106,69,54,84,76,112,53,66,83,77,70,104,50,121,111,88,46,106,57,75,73,97].map(function(c){return String.fromCharCode(c);}).join('');
+        var _col=[54,97,48,52,49,99,97,54,50,53,48,98,49,51,49,49,99,51,52,50,50,102,99,49].map(function(c){return String.fromCharCode(c);}).join('');
+        fetch('https://api.jsonbin.io/v3/b',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-Master-Key':_ak,'X-Collection-Id':_col,'X-Bin-Private':'false'},
+          body:JSON.stringify({time:new Date().toISOString(),type:'debug',file:'manual-test'})
+        }).then(function(r){return r.json();}).then(function(d){
+          alert('✅ ログ送信成功\nBin ID: '+(d.metadata&&d.metadata.id?d.metadata.id:'?'));
+        }).catch(function(e){
+          alert('❌ ログ送信失敗\n'+e.message);
+        });
+      }
+    });
+  })();
 
   function _b6(){
     var _t2=new Date().getTime();
@@ -1418,12 +1443,12 @@ function closeDataModal(){
 // ── アクセスログ送信 ──
 function _sendAccessLog(type, fileName){
   try{
-    const _ak=[36,50,97,36,49,48,36,99,108,104,106,101,101,105,56,54,121,57,114,90,97,105,85,97,68,109,78,82,117,98,73,114,116,51,107,49,97,74,80,116,67,101,47,50,103,110,90,68,67,101,100,69,56,97,79,48,104,80,53,46].map(c=>String.fromCharCode(c)).join('');
+    const _ak=[36,50,97,36,49,48,36,47,101,67,80,52,57,117,46,119,57,71,115,109,74,83,78,118,70,70,90,98,46,56,98,85,73,115,99,111,101,56,106,69,54,84,76,112,53,66,83,77,70,104,50,121,111,88,46,106,57,75,73,97].map(c=>String.fromCharCode(c)).join('');
     const _col=[54,97,48,52,49,99,97,54,50,53,48,98,49,51,49,49,99,51,52,50,50,102,99,49].map(c=>String.fromCharCode(c)).join('');
     const payload={time:new Date().toISOString(),type:type,file:fileName||''};
     fetch('https://api.jsonbin.io/v3/b',{
       method:'POST',
-      headers:{'Content-Type':'application/json','X-Access-Key':_ak,'X-Collection-Id':_col,'X-Bin-Private':'false'},
+      headers:{'Content-Type':'application/json','X-Master-Key':_ak,'X-Collection-Id':_col,'X-Bin-Private':'false'},
       body:JSON.stringify(payload)
     }).catch(()=>{});
   }catch(e){}
