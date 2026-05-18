@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エヴァ風演出組み込み用・ベースクイズアプリ</title>
+  <style>
+    /* 基本デザイン */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .quiz-container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .options-container {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background-color: #f8f9fa;
+      border: 2px solid #e9ecef;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      background-color: #e9ecef;
+      border-color: #dee2e6;
+    }
+
+    /* 通常のリザルト画面（ここにエヴァ演出を割り込ませたい） */
+    .result-screen {
+      text-align: center;
+    }
+
+    .restart-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .restart-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <!-- クイズプレイ画面 -->
+    <div id="quiz-ui">
+      <h2 id="question-text">問題文がここに表示されます</h2>
+      <div class="options-container" id="options-ui">
+        <!-- 選択肢ボタンがJavaScriptで自動生成されます -->
+      </div>
+    </div>
+
+    <!-- 通常のリザルト画面 -->
+    <div id="result-ui" class="result-screen" style="display: none;">
+      <h2>クイズ終了！</h2>
+      <p id="score-text">0問中 0問正解しました！</p>
+      <button class="restart-btn" onclick="restartQuiz()">もう一度挑戦する</button>
+    </div>
+  </div>
+
+  <script>
+    // クイズのデータ（問題、選択肢、正解のインデックス）
+    const quizData = [
+      {
+        question: "日本で一番高い山はどれ？",
+        options: ["富士山", "北岳", "奥穂高岳", "槍ヶ岳"],
+        answer: 0
+      },
+      {
+        question: "世界で一番広い海はどれ？",
+        options: ["大西洋", "インド洋", "太平洋", "北極海"],
+        answer: 2
+      },
+      {
+        question: "信号機の「進んでもよい」の色は法律上何色？",
+        options: ["緑色", "青色", "水色", "エメラルドグリーン"],
+        answer: 1
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // クイズの画面を初期化・表示する関数
+    function loadQuiz() {
+      const currentQuiz = quizData[currentQuestionIndex];
+      
+      // 問題文を表示
+      document.getElementById("question-text").innerText = `Q${currentQuestionIndex + 1}: ${currentQuiz.question}`;
+      
+      // 選択肢をクリアして再生成
+      const optionsContainer = document.getElementById("options-ui");
+      optionsContainer.innerHTML = "";
+      
+      currentQuiz.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.classList.add("option-btn");
+        button.innerText = option;
+        button.onclick = () => selectAnswer(index);
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    // 選択肢がクリックされたときの処理
+    function selectAnswer(selectedIndex) {
+      const currentQuiz = quizData[currentQuestionIndex];
+      
+      // 正解ならスコアを加算
+      if (selectedIndex === currentQuiz.answer) {
+        score++;
+      }
+      
+      // 次の問題へ、無ければ結果表示へ
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        loadQuiz();
+      } else {
+        showResults();
+      }
+    }
+
+    // クイズ終了時の結果表示（★Claudeにここに演出を組み込んでもらう）
+    function showResults() {
+      document.getElementById("quiz-ui").style.display = "none";
+      document.getElementById("result-ui").style.display = "block";
+      document.getElementById("score-text").innerText = `${quizData.length}問中 ${score}問正解しました！`;
+    }
+
+    // 最初からやり直す処理
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      document.getElementById("result-ui").style.display = "none";
+      document.getElementById("quiz-ui").style.display = "block";
+      loadQuiz();
+    }
+
+    // アプリ起動時に最初の問題を表示
+    loadQuiz();
+  </script>
+
+</body>
+</html>
