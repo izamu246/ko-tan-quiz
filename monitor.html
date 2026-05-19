@@ -122,7 +122,16 @@ async function loadLogs(){
   try{
     const r=await fetch(_LIST,{headers:{'X-Master-Key':_k1}});
     if(!r.ok) throw new Error('取得失敗 '+r.status);
-    const bins=(await r.json()).result||[];
+    const resData=await r.json();
+    console.log('API response:', JSON.stringify(resData).slice(0,300));
+    // JSONbinのレスポンス形式に対応（result配列 or 直接配列 or {bins:[]}等）
+    let bins=[];
+    if(Array.isArray(resData)) bins=resData;
+    else if(resData.result&&Array.isArray(resData.result)) bins=resData.result;
+    else if(resData.bins&&Array.isArray(resData.bins)) bins=resData.bins;
+    else bins=Object.values(resData).find(v=>Array.isArray(v))||[];
+    console.log('bins count:', bins.length, 'sample:', JSON.stringify(bins[0]).slice(0,100));
+    console.log('bins count:', bins.length);
     if(!bins.length){document.getElementById('user-area').innerHTML='<div class="empty">データなし</div>';updateStats([]);return;}
     const details=await Promise.all(bins.slice(0,200).map(b=>
       fetch(`${_BASE}/${b.record||b.id||b}`,{headers:{'X-Master-Key':_k1}}).then(r=>r.json()).catch(()=>null)
@@ -132,7 +141,8 @@ async function loadLogs(){
     renderUsers(allLogs);
     renderAllLogs(allLogs);
   }catch(e){
-    document.getElementById('user-area').innerHTML=`<div class="empty">エラー: ${e.message}</div>`;
+    document.getElementById('user-area').innerHTML=`<div class="empty">エラー: ${e.message}<br><small>コンソールを確認してください</small></div>`;
+    console.error('loadLogs error:', e);
   }
 }
 
