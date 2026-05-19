@@ -7,38 +7,54 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+JP:wght@300;400;700&display=swap');
   :root{
-    --bg:#0a0e1a;
-    --panel:#111827;
-    --border:#1e3a5f;
-    --accent:#00d4ff;
-    --accent2:#00ff88;
-    --text:#c9d8e8;
-    --dim:#4a6080;
+    --bg:#0a0e1a;--panel:#111827;--border:#1e3a5f;
+    --accent:#00d4ff;--accent2:#00ff88;--text:#c9d8e8;--dim:#4a6080;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;padding:20px;}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;padding:16px;}
   h1{font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:1.4rem;letter-spacing:3px;margin-bottom:4px;}
-  .subtitle{color:var(--dim);font-size:0.75rem;letter-spacing:2px;margin-bottom:24px;}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px;}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;}
-  .card-num{font-family:'Share Tech Mono',monospace;font-size:2rem;color:var(--accent);line-height:1;}
-  .card-label{font-size:0.7rem;color:var(--dim);margin-top:6px;letter-spacing:1px;}
-  .section-title{font-size:0.75rem;color:var(--accent);letter-spacing:2px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
-  .log-table{width:100%;border-collapse:collapse;font-size:0.78rem;}
-  .log-table th{background:#0d1f35;color:var(--dim);padding:8px 10px;text-align:left;font-weight:400;letter-spacing:1px;}
-  .log-table td{padding:8px 10px;border-bottom:1px solid #0d1a2a;color:var(--text);}
-  .log-table tr:hover td{background:#0d1f35;}
-  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.7rem;font-family:'Share Tech Mono',monospace;}
-  .badge-new{background:#003322;color:var(--accent2);border:1px solid var(--accent2);}
-  .badge-cache{background:#001a33;color:var(--accent);border:1px solid var(--accent);}
+  .subtitle{color:var(--dim);font-size:0.75rem;letter-spacing:2px;margin-bottom:20px;}
   .status{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent2);box-shadow:0 0 6px var(--accent2);margin-right:6px;animation:pulse 2s infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
   .refresh-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 16px;border-radius:4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.8rem;letter-spacing:1px;}
   .refresh-btn:hover{background:var(--accent);color:#000;}
-  .header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:20px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+  .card-num{font-family:'Share Tech Mono',monospace;font-size:1.8rem;color:var(--accent);line-height:1;}
+  .card-label{font-size:0.68rem;color:var(--dim);margin-top:5px;letter-spacing:1px;}
+  .tabs{display:flex;gap:8px;margin-bottom:16px;}
+  .tab-btn{background:transparent;border:1px solid var(--border);color:var(--dim);padding:6px 14px;border-radius:4px;cursor:pointer;font-size:0.78rem;letter-spacing:1px;}
+  .tab-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,0.08);}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px;}
+  .section-title{font-size:0.72rem;color:var(--accent);letter-spacing:2px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+  .user-card{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s;}
+  .user-card:hover{border-color:var(--accent);}
+  .user-name{font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:6px;}
+  .user-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:0.72rem;color:var(--dim);}
+  .avg-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:0.72rem;font-weight:700;}
+  .avg-pass{background:#003322;color:var(--accent2);border:1px solid var(--accent2);}
+  .avg-fail{background:#1a0011;color:#ff4466;border:1px solid #ff4466;}
+  .fp-tag{font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--dim);background:#0d1a2a;padding:2px 6px;border-radius:3px;}
+  .log-table{width:100%;border-collapse:collapse;font-size:0.75rem;}
+  .log-table th{background:#0d1f35;color:var(--dim);padding:7px 8px;text-align:left;font-weight:400;letter-spacing:1px;}
+  .log-table td{padding:7px 8px;border-bottom:1px solid #0d1a2a;color:var(--text);}
+  .log-table tr:hover td{background:#0d1f35;}
+  .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:0.68rem;font-family:'Share Tech Mono',monospace;}
+  .badge-new{background:#003322;color:var(--accent2);border:1px solid var(--accent2);}
+  .badge-cache{background:#001a33;color:var(--accent);border:1px solid var(--accent);}
   .loading{color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:0.85rem;padding:20px;text-align:center;}
   .empty{color:var(--dim);font-size:0.8rem;padding:20px;text-align:center;}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;}
+  #popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+  #popup-box{background:var(--panel);border:1px solid var(--accent);border-radius:12px;padding:20px;width:100%;max-width:600px;margin:auto;position:relative;}
+  #popup-close{position:absolute;top:12px;right:14px;background:transparent;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;}
+  #popup-close:hover{color:var(--text);}
+  #popup-title{font-size:1.1rem;font-weight:700;color:var(--accent2);margin-bottom:14px;}
+  #popup-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .pstat{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:10px 14px;text-align:center;flex:1;min-width:70px;}
+  .pstat-num{font-family:'Share Tech Mono',monospace;font-size:1.3rem;color:var(--accent);}
+  .pstat-label{font-size:0.63rem;color:var(--dim);margin-top:3px;}
+  .nn-chip{display:inline-block;padding:3px 10px;background:#0d1a2a;border:1px solid var(--border);border-radius:12px;font-size:0.75rem;color:var(--text);margin:3px;}
 </style>
 </head>
 <body>
@@ -52,138 +68,158 @@
 </div>
 
 <div class="grid">
-  <div class="card">
-    <div class="card-num" id="cnt-total">-</div>
-    <div class="card-label">累計アクセス</div>
-  </div>
-  <div class="card">
-    <div class="card-num" id="cnt-today">-</div>
-    <div class="card-label">今日</div>
-  </div>
-  <div class="card">
-    <div class="card-num" id="cnt-week">-</div>
-    <div class="card-label">今週</div>
-  </div>
-  <div class="card">
-    <div class="card-num" id="cnt-new">-</div>
-    <div class="card-label">新規取得</div>
+  <div class="card"><div class="card-num" id="cnt-total">-</div><div class="card-label">累計</div></div>
+  <div class="card"><div class="card-num" id="cnt-today">-</div><div class="card-label">今日</div></div>
+  <div class="card"><div class="card-num" id="cnt-week">-</div><div class="card-label">今週</div></div>
+  <div class="card"><div class="card-num" id="cnt-users">-</div><div class="card-label">ユーザー</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('users')">👤 ユーザー別</button>
+  <button class="tab-btn" onclick="showTab('logs')">📋 全ログ</button>
+</div>
+
+<div id="tab-users">
+  <div class="panel">
+    <div class="section-title">ユーザー一覧（タップで詳細）</div>
+    <div id="user-area"><div class="loading">読み込み中...</div></div>
   </div>
 </div>
 
-<div class="panel">
-  <div class="section-title">アクセスログ（新しい順）</div>
-  <div id="log-area"><div class="loading">読み込み中...</div></div>
+<div id="tab-logs" style="display:none;">
+  <div class="panel">
+    <div class="section-title">全アクセスログ（新しい順）</div>
+    <div id="log-area"><div class="loading">読み込み中...</div></div>
+  </div>
+</div>
+
+<!-- ポップアップ -->
+<div id="popup-overlay" onclick="closePopupBg(event)">
+  <div id="popup-box">
+    <button id="popup-close" onclick="closePopup()">×</button>
+    <div id="popup-title"></div>
+    <div id="popup-stats"></div>
+    <div id="popup-nn" style="margin-bottom:14px;"></div>
+    <div class="section-title">アクセス履歴</div>
+    <div id="popup-log"></div>
+  </div>
 </div>
 
 <script>
-// ── 設定（難読化済みキー） ──
-const _k1 = [36,50,97,36,49,48,36,47,101,67,80,52,57,117,46,119,57,71,115,109,74,83,78,118,70,70,90,98,46,56,98,85,73,115,99,111,101,56,106,69,54,84,76,112,53,66,83,77,70,104,50,121,111,88,46,106,57,75,73,97].map(c=>String.fromCharCode(c)).join('');
-const _k2 = [54,97,48,52,49,99,97,54,50,53,48,98,49,51,49,49,99,51,52,50,50,102,99,49].map(c=>String.fromCharCode(c)).join('');
-const _BASE = 'https://api.jsonbin.io/v3/b';
-const _LIST = `https://api.jsonbin.io/v3/c/${_k2}/bins`;
+const _k1=[36,50,97,36,49,48,36,47,101,67,80,52,57,117,46,119,57,71,115,109,74,83,78,118,70,70,90,98,46,56,98,85,73,115,99,111,101,56,106,69,54,84,76,112,53,66,83,77,70,104,50,121,111,88,46,106,57,75,73,97].map(c=>String.fromCharCode(c)).join('');
+const _k2=[54,97,48,52,49,99,97,54,50,53,48,98,49,51,49,49,99,51,52,50,50,102,99,49].map(c=>String.fromCharCode(c)).join('');
+const _BASE='https://api.jsonbin.io/v3/b';
+const _LIST=`https://api.jsonbin.io/v3/c/${_k2}/bins`;
+let allLogs=[];
+
+function jst(iso){
+  const d=new Date(new Date(iso).getTime()+9*60*60*1000);
+  return `${d.getUTCFullYear()}/${String(d.getUTCMonth()+1).padStart(2,'0')}/${String(d.getUTCDate()).padStart(2,'0')} ${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+}
 
 async function loadLogs(){
-  document.getElementById('log-area').innerHTML='<div class="loading">読み込み中...</div>';
+  ['user-area','log-area'].forEach(id=>document.getElementById(id).innerHTML='<div class="loading">読み込み中...</div>');
   try{
-    // コレクション内のBin一覧を取得
-    const r = await fetch(_LIST,{headers:{'X-Master-Key':_k1}});
-    if(!r.ok) throw new Error('取得失敗: '+r.status);
-    const res = await r.json();
-    const bins = res.result || res || [];
-
-    if(!bins||bins.length===0){
-      document.getElementById('log-area').innerHTML='<div class="empty">ログがまだありません</div>';
-      updateStats([]);
-      return;
-    }
-
-    // 各Binの内容を取得（最新50件まで）
-    const targets = bins.slice(0,50);
-    const details = await Promise.all(
-      targets.map(b=>{
-        const binId = b.record || b.id || b;
-        return fetch(`${_BASE}/${binId}`,{headers:{'X-Master-Key':_k1}})
-          .then(r=>r.json())
-          .catch(()=>null);
-      })
-    );
-
-    const logs = details
-      .filter(d=>d&&d.record)
-      .map(d=>d.record)
-      .sort((a,b)=>new Date(b.time)-new Date(a.time));
-
-    updateStats(logs);
-    renderTable(logs);
+    const r=await fetch(_LIST,{headers:{'X-Master-Key':_k1}});
+    if(!r.ok) throw new Error('取得失敗 '+r.status);
+    const bins=(await r.json()).result||[];
+    if(!bins.length){document.getElementById('user-area').innerHTML='<div class="empty">データなし</div>';updateStats([]);return;}
+    const details=await Promise.all(bins.slice(0,200).map(b=>
+      fetch(`${_BASE}/${b.record||b.id||b}`,{headers:{'X-Master-Key':_k1}}).then(r=>r.json()).catch(()=>null)
+    ));
+    allLogs=details.filter(d=>d&&d.record).map(d=>d.record).sort((a,b)=>new Date(b.time)-new Date(a.time));
+    updateStats(allLogs);
+    renderUsers(allLogs);
+    renderAllLogs(allLogs);
   }catch(e){
-    document.getElementById('log-area').innerHTML=`<div class="empty">エラー: ${e.message}</div>`;
+    document.getElementById('user-area').innerHTML=`<div class="empty">エラー: ${e.message}</div>`;
   }
 }
 
 function updateStats(logs){
-  const now = new Date();
-  const todayStr = now.toDateString();
-  const weekAgo = new Date(now - 7*24*60*60*1000);
-
-  const total = logs.length;
-  const today = logs.filter(l=>new Date(l.time).toDateString()===todayStr).length;
-  const week  = logs.filter(l=>new Date(l.time)>=weekAgo).length;
-  const newDl = logs.filter(l=>l.type==='new').length;
-
-  document.getElementById('cnt-total').textContent = total;
-  document.getElementById('cnt-today').textContent = today;
-  document.getElementById('cnt-week').textContent  = week;
-  document.getElementById('cnt-new').textContent   = newDl;
+  const now=new Date(),todayStr=now.toDateString(),weekAgo=new Date(now-7*24*60*60*1000);
+  document.getElementById('cnt-total').textContent=logs.length;
+  document.getElementById('cnt-today').textContent=logs.filter(l=>new Date(l.time).toDateString()===todayStr).length;
+  document.getElementById('cnt-week').textContent=logs.filter(l=>new Date(l.time)>=weekAgo).length;
+  document.getElementById('cnt-users').textContent=new Set(logs.map(l=>l.fp||l.user||'?')).size;
 }
 
-function renderTable(logs){
-  if(logs.length===0){
-    document.getElementById('log-area').innerHTML='<div class="empty">ログがまだありません</div>';
-    return;
-  }
-  const rows = logs.map(l=>{
-    const d = new Date(l.time);
-    // UTC+9に変換
-    const jst = new Date(d.getTime() + 9*60*60*1000);
-    const dateStr = `${jst.getUTCFullYear()}/${String(jst.getUTCMonth()+1).padStart(2,'0')}/${String(jst.getUTCDate()).padStart(2,'0')}`;
-    const timeStr = `${String(jst.getUTCHours()).padStart(2,'0')}:${String(jst.getUTCMinutes()).padStart(2,'0')}`;
-    const badge = l.type==='new'
-      ? '<span class="badge badge-new">新規取得</span>'
-      : l.type==='debug'
-      ? '<span class="badge" style="background:#1a1a00;color:#ffdd00;border:1px solid #ffdd00">デバッグ</span>'
-      : '<span class="badge badge-cache">キャッシュ</span>';
-    const user = l.user ? `<span style="color:var(--accent2);font-weight:bold">${l.user}</span>` : '<span style="color:var(--dim)">-</span>';
-    const plays = l.plays !== undefined ? l.plays+'回' : '-';
-    const avg5  = l.avg5  !== null && l.avg5 !== undefined
-      ? `<span style="color:${l.avg5>=60?'var(--accent2)':'#ff4466'};font-weight:bold">${l.avg5}%</span>`
-      : '-';
-    const scores = l.scores && l.scores.length
-      ? l.scores.map(s=>`<span style="font-size:0.65rem;color:var(--dim)">${s}%</span>`).join(' ')
-      : '-';
-    const fp = l.fp ? `<span style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--dim)">${l.fp}</span>` : '-';
-    return `<tr>
-      <td>${dateStr}</td>
-      <td>${timeStr}</td>
-      <td>${user}</td>
-      <td>${fp}</td>
-      <td>${plays}</td>
-      <td>${avg5}</td>
-      <td>${scores}</td>
-      <td>${badge}</td>
-    </tr>`;
+function groupByFp(logs){
+  const g={};
+  logs.forEach(l=>{const k=l.fp||l.user||'unknown';if(!g[k])g[k]=[];g[k].push(l);});
+  return Object.entries(g).sort((a,b)=>new Date(b[1][0].time)-new Date(a[1][0].time));
+}
+
+function avgOf(logs){
+  const w=logs.filter(l=>l.avg5!=null);
+  return w.length?Math.round(w.reduce((s,l)=>s+(l.avg5||0),0)/w.length):null;
+}
+
+function renderUsers(logs){
+  const groups=groupByFp(logs);
+  if(!groups.length){document.getElementById('user-area').innerHTML='<div class="empty">なし</div>';return;}
+  document.getElementById('user-area').innerHTML=groups.map(([fp,ls])=>{
+    const latest=ls[0];
+    const names=[...new Set(ls.map(l=>l.user).filter(Boolean))];
+    const avg=avgOf(ls);
+    const avgBadge=avg!=null?`<span class="avg-badge ${avg>=60?'avg-pass':'avg-fail'}">${avg}%</span>`:'';
+    const plays=latest.plays!=null?latest.plays+'回':'';
+    return `<div class="user-card" onclick="openPopup('${fp}')">
+      <div class="user-name">${names[0]||'不明'} ${avgBadge}</div>
+      <div class="user-meta">
+        <span>🕐 ${jst(latest.time)}</span>
+        <span>📡 ${ls.length}回</span>
+        ${plays?`<span>🎮 ${plays}</span>`:''}
+        <span class="fp-tag">${fp.slice(0,8)}</span>
+      </div>
+      ${names.length>1?`<div style="margin-top:8px;font-size:0.68rem;color:var(--dim)">名前: ${names.join(' → ')}</div>`:''}
+    </div>`;
   }).join('');
-
-  document.getElementById('log-area').innerHTML=`
-    <table class="log-table">
-      <thead><tr><th>日付</th><th>時刻(JST)</th><th>ユーザー</th><th>端末ID</th><th>回数</th><th>5回平均</th><th>直近スコア</th><th>種別</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
 }
 
-// 初回読み込み
+function renderAllLogs(logs){
+  if(!logs.length){document.getElementById('log-area').innerHTML='<div class="empty">なし</div>';return;}
+  const rows=logs.map(l=>{
+    const badge=l.type==='new'?'<span class="badge badge-new">新規</span>':l.type==='debug'?'<span class="badge" style="background:#1a1a00;color:#ffdd00;border:1px solid #ffdd00">DBG</span>':'<span class="badge badge-cache">cache</span>';
+    const avg=l.avg5!=null?`<span style="color:${l.avg5>=60?'var(--accent2)':'#ff4466'}">${l.avg5}%</span>`:'-';
+    return `<tr><td>${jst(l.time)}</td><td style="color:var(--accent2);font-weight:bold">${l.user||'-'}</td><td style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--dim)">${(l.fp||'').slice(0,8)}</td><td>${l.plays!=null?l.plays+'回':'-'}</td><td>${avg}</td><td>${badge}</td></tr>`;
+  }).join('');
+  document.getElementById('log-area').innerHTML=`<table class="log-table"><thead><tr><th>日時(JST)</th><th>ユーザー</th><th>端末ID</th><th>回数</th><th>平均</th><th>種別</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function openPopup(fp){
+  const ls=allLogs.filter(l=>(l.fp||l.user||'unknown')===fp);
+  if(!ls.length)return;
+  const latest=ls[0];
+  const names=[...new Set(ls.map(l=>l.user).filter(Boolean))];
+  const avg=avgOf(ls);
+  document.getElementById('popup-title').textContent=names[0]||'不明ユーザー';
+  document.getElementById('popup-stats').innerHTML=`
+    <div class="pstat"><div class="pstat-num">${ls.length}</div><div class="pstat-label">アクセス</div></div>
+    <div class="pstat"><div class="pstat-num">${latest.plays!=null?latest.plays:'-'}</div><div class="pstat-label">プレイ数</div></div>
+    <div class="pstat"><div class="pstat-num" style="color:${avg>=60?'var(--accent2)':'#ff4466'}">${avg!=null?avg+'%':'-'}</div><div class="pstat-label">平均正答率</div></div>
+    <div class="pstat"><div class="pstat-num" style="font-size:0.85rem">${fp.slice(0,8)}</div><div class="pstat-label">端末ID</div></div>`;
+  document.getElementById('popup-nn').innerHTML=names.length>1
+    ?`<div style="font-size:0.7rem;color:var(--dim);margin-bottom:6px">ニックネーム履歴</div>${names.map(n=>`<span class="nn-chip">${n}</span>`).join('')}`:'';
+  const rows=ls.map(l=>{
+    const sc=l.scores&&l.scores.length?l.scores.map(s=>s+'%').join(' '):'';
+    const av=l.avg5!=null?`<span style="color:${l.avg5>=60?'var(--accent2)':'#ff4466'}">${l.avg5}%</span>`:'-';
+    return `<tr><td>${jst(l.time)}</td><td style="color:var(--accent2)">${l.user||'-'}</td><td>${av}</td><td style="font-size:0.65rem;color:var(--dim)">${sc}</td></tr>`;
+  }).join('');
+  document.getElementById('popup-log').innerHTML=`<table class="log-table"><thead><tr><th>日時</th><th>名前</th><th>平均</th><th>直近スコア</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('popup-overlay').style.display='flex';
+}
+
+function closePopup(){document.getElementById('popup-overlay').style.display='none';}
+function closePopupBg(e){if(e.target===document.getElementById('popup-overlay'))closePopup();}
+function showTab(t){
+  document.getElementById('tab-users').style.display=t==='users'?'block':'none';
+  document.getElementById('tab-logs').style.display=t==='logs'?'block':'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='users')||(i===1&&t==='logs')));
+}
+
 loadLogs();
-// 5分おきに自動更新
-setInterval(loadLogs, 5*60*1000);
+setInterval(loadLogs,5*60*1000);
 </script>
 </body>
 </html>
