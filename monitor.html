@@ -153,17 +153,29 @@ function renderTable(logs){
       ? '<span class="badge" style="background:#1a1a00;color:#ffdd00;border:1px solid #ffdd00">デバッグ</span>'
       : '<span class="badge badge-cache">キャッシュ</span>';
     const user = l.user ? `<span style="color:var(--accent2);font-weight:bold">${l.user}</span>` : '<span style="color:var(--dim)">-</span>';
+    const plays = l.plays !== undefined ? l.plays+'回' : '-';
+    const avg5  = l.avg5  !== null && l.avg5 !== undefined
+      ? `<span style="color:${l.avg5>=60?'var(--accent2)':'#ff4466'};font-weight:bold">${l.avg5}%</span>`
+      : '-';
+    const scores = l.scores && l.scores.length
+      ? l.scores.map(s=>`<span style="font-size:0.65rem;color:var(--dim)">${s}%</span>`).join(' ')
+      : '-';
+    const fp = l.fp ? `<span style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--dim)">${l.fp}</span>` : '-';
     return `<tr>
       <td>${dateStr}</td>
       <td>${timeStr}</td>
       <td>${user}</td>
+      <td>${fp}</td>
+      <td>${plays}</td>
+      <td>${avg5}</td>
+      <td>${scores}</td>
       <td>${badge}</td>
     </tr>`;
   }).join('');
 
   document.getElementById('log-area').innerHTML=`
     <table class="log-table">
-      <thead><tr><th>日付</th><th>時刻(JST)</th><th>ユーザー</th><th>種別</th></tr></thead>
+      <thead><tr><th>日付</th><th>時刻(JST)</th><th>ユーザー</th><th>端末ID</th><th>回数</th><th>5回平均</th><th>直近スコア</th><th>種別</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
