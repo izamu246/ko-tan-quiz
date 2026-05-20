@@ -77,6 +77,7 @@
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('users')">👤 ユーザー別</button>
   <button class="tab-btn" onclick="showTab('logs')">📋 全ログ</button>
+  <button class="tab-btn" onclick="showTab('feedback')">💬 意見・要望</button>
 </div>
 
 <div id="tab-users">
@@ -90,6 +91,13 @@
   <div class="panel">
     <div class="section-title">全アクセスログ（新しい順）</div>
     <div id="log-area"><div class="loading">読み込み中...</div></div>
+  </div>
+</div>
+
+<div id="tab-feedback" style="display:none;">
+  <div class="panel">
+    <div class="section-title">ご意見・ご要望・不具合報告</div>
+    <div id="feedback-area"><div class="loading">読み込み中...</div></div>
   </div>
 </div>
 
@@ -226,7 +234,27 @@ function closePopupBg(e){if(e.target===document.getElementById('popup-overlay'))
 function showTab(t){
   document.getElementById('tab-users').style.display=t==='users'?'block':'none';
   document.getElementById('tab-logs').style.display=t==='logs'?'block':'none';
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='users')||(i===1&&t==='logs')));
+  document.getElementById('tab-feedback').style.display=t==='feedback'?'block':'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',
+    (i===0&&t==='users')||(i===1&&t==='logs')||(i===2&&t==='feedback')));
+  if(t==='feedback') renderFeedback(allLogs);
+}
+
+function renderFeedback(logs){
+  const fbs=logs.filter(l=>l.type==='feedback').sort((a,b)=>new Date(b.time)-new Date(a.time));
+  if(!fbs.length){document.getElementById('feedback-area').innerHTML='<div class="empty">まだ届いていません</div>';return;}
+  const rows=fbs.map(l=>{
+    const catColor={'不具合報告':'#ff4466','解説の誤り':'#ffaa00','ご意見・要望':'var(--accent2)','その他':'var(--dim)'}[l.cat]||'var(--dim)';
+    return `<div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="color:${catColor};font-weight:700;font-size:0.85rem">${l.cat||'その他'}</span>
+        <span style="color:var(--dim);font-size:0.7rem">${jst(l.time)}</span>
+      </div>
+      <div style="color:var(--text);font-size:0.85rem;line-height:1.6;margin-bottom:8px;">${l.msg||''}</div>
+      <div style="color:var(--accent2);font-size:0.72rem">${l.user||'-'} <span style="color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:0.62rem">${(l.fp||'').slice(0,8)}</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('feedback-area').innerHTML=rows;
 }
 
 loadLogs();
