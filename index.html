@@ -331,6 +331,11 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
   0%   { background-position: center 0%; }
   100% { background-position: center 400%; }
 }
+
+@keyframes _toastScroll {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
 </style>
 </head>
 <body>
@@ -419,7 +424,9 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 </div>
 
 <!-- 挨拶トースト -->
-<div id="greeting-toast" style="display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(11,66,89,0.92);color:white;padding:10px 20px;border-radius:24px;font-size:13px;z-index:8500;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:opacity 0.5s;"></div>
+<div id="greeting-toast" style="display:none;position:fixed;top:70px;left:0;right:0;z-index:8500;overflow:hidden;transition:opacity 0.5s;">
+  <div id="greeting-toast-inner" style="background:rgba(11,66,89,0.92);color:white;padding:8px 16px;font-size:13px;white-space:nowrap;display:inline-block;animation:_toastScroll 12s linear forwards;"></div>
+</div>
 
 <!-- データ取得モーダル -->
 <div id="data-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:8000;align-items:center;justify-content:center;">
@@ -448,7 +455,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     <div style="width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start;padding-top:2px;gap:3px;">
       <span onclick="document.getElementById('feedback-modal').style.display='flex'" style="font-size:10px;color:rgba(255,255,255,0.7);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;margin-bottom:1px;">💬 意見</span>
       <span style="font-family:monospace;font-size:8px;color:rgba(255,200,80,0.55);letter-spacing:0.5px;border:1px solid rgba(255,200,80,0.25);border-radius:3px;padding:1px 5px;white-space:nowrap;">β TEST</span>
-      <span id="hdr-nickname" onclick="_openNicknameEdit()" style="font-family:'Noto Sans JP',sans-serif;font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.5px;white-space:nowrap;overflow:hidden;max-width:76px;text-overflow:ellipsis;cursor:pointer;"></span>
+      <span id="hdr-nickname" onclick="_openNicknameEdit()" style="font-family:'Noto Sans JP',sans-serif;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.5px;white-space:nowrap;overflow:hidden;max-width:60px;text-overflow:ellipsis;cursor:pointer;display:block;margin-top:2px;"></span>
     </div>
     <div class="header-titles">
       <div class="h-main">工事担任者 デジタル第１級</div>
@@ -1745,13 +1752,19 @@ function _sendFeedback(){
   // 送信完了トースト
   var toast=document.getElementById('greeting-toast');
   if(toast){
-    toast.textContent='送信しました！ありがとうございます 🙏';
+    var fbInner=document.getElementById('greeting-toast-inner');
+    if(fbInner){
+      fbInner.textContent='送信しました！ありがとうございます 🙏';
+      fbInner.style.animation='none';
+      fbInner.offsetHeight;
+      fbInner.style.animation='_toastScroll 8s linear forwards';
+    }
     toast.style.display='block';
     toast.style.opacity='1';
     setTimeout(function(){
       toast.style.opacity='0';
       setTimeout(function(){toast.style.display='none';},500);
-    },2500);
+    },8000);
   }
 }
 
@@ -1791,13 +1804,18 @@ function _showPeriodicMsg(){
   var countdown = diffDays > 0 ? '試験まであと'+diffDays+'日！' : diffDays===0 ? '今日が試験日！' : '';
 
   var msg = _periodicMsgs[Math.floor(Math.random()*_periodicMsgs.length)];
-  toast.textContent = (countdown ? countdown : '') + msg;
+  var inner = document.getElementById('greeting-toast-inner');
+  if(!inner) return;
+  inner.textContent = (countdown ? countdown : '') + msg;
+  inner.style.animation = 'none';
+  inner.offsetHeight;
+  inner.style.animation = '_toastScroll 12s linear forwards';
   toast.style.display = 'block';
   toast.style.opacity = '1';
   setTimeout(function(){
     toast.style.opacity = '0';
     setTimeout(function(){ toast.style.display='none'; }, 500);
-  }, 3500);
+  }, 12000);
 }
 
 function _startPeriodicMsg(){
@@ -1936,13 +1954,19 @@ function _showGreeting(name, honorific){
   var msg = msgs[Math.floor(Math.random()*msgs.length)];
 
   var toast = document.getElementById('greeting-toast');
-  toast.textContent = greet + '、' + name + honorific + '！' + countdown + msg;
+  var inner = document.getElementById('greeting-toast-inner');
+  if(!toast||!inner) return;
+  inner.textContent = greet + '、' + name + honorific + '！' + countdown + msg;
+  // アニメーションリセット
+  inner.style.animation = 'none';
+  inner.offsetHeight;
+  inner.style.animation = '_toastScroll 12s linear forwards';
   toast.style.display = 'block';
   toast.style.opacity = '1';
   setTimeout(function(){
     toast.style.opacity = '0';
     setTimeout(function(){ toast.style.display='none'; }, 500);
-  }, 4500);
+  }, 12000);
 }
 
 function _closeWhatsNew(){
