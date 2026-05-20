@@ -389,6 +389,18 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
   </div>
 </div>
 
+<!-- 苦手克服モード確認モーダル -->
+<div id="nigate-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9200;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:28px 24px;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.35);text-align:center;">
+    <div style="font-size:40px;margin-bottom:10px;">🎯</div>
+    <div style="font-family:'Noto Serif JP',serif;font-size:16px;font-weight:700;color:#0b4259;margin-bottom:10px;">苦手克服モード</div>
+    <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:6px;">過去の間違えた問題を解き直します！</div>
+    <div style="font-size:13px;color:#0b4259;font-weight:700;margin-bottom:18px;">現在 <span id="nigate-modal-count">0</span>問 ストック中</div>
+    <button onclick="_startNigateQuiz()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);color:white;border:none;border-radius:10px;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;">🎯 スタート！</button>
+    <button onclick="document.getElementById('nigate-modal').style.display='none'" style="width:100%;padding:10px;background:transparent;border:1px solid #ddd;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">キャンセル</button>
+  </div>
+</div>
+
 <!-- ニックネーム変更モーダル -->
 <div id="nickname-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9000;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:16px;padding:28px 24px;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.35);">
@@ -606,6 +618,11 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
       <div id="history-summary"></div>
       <div id="history-list"></div>
       <button class="btn-secondary" style="margin-top:10px;font-size:11px;" onclick="clearHistory()">履歴を削除</button>
+      <div style="margin-top:24px;padding-top:16px;border-top:2px solid #eee;">
+        <div style="font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;color:#0b4259;margin-bottom:10px;">🎯 苦手克服モード 受験履歴</div>
+        <div id="nigate-history-list"></div>
+        <button class="btn-secondary" style="margin-top:8px;font-size:11px;" onclick="if(confirm('苦手克服履歴を削除しますか？')){localStorage.removeItem('nigateHistory');renderNigateHistory();}">🗑 克服履歴を削除</button>
+      </div>
     </div>
   </div>
 
@@ -739,6 +756,7 @@ const QUESTIONS=[];
 // ===== STATE =====
 let settings={subject:'技術',order:'random',count:10};
 let isRetryMode=false; // 解き直しモードフラグ
+let isNigateMode=false; // 苦手克服モードフラグ
 let quizQueue=[],currentIdx=0,answered=false;
 let score=0,combo=0,maxCombo=0,sessionResults=[];
 
@@ -974,7 +992,7 @@ function showTab(tab){
   document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='quiz')||(i===1&&tab==='history')));
   document.getElementById('tab-quiz').style.display=tab==='quiz'?'block':'none';
   document.getElementById('tab-history').style.display=tab==='history'?'block':'none';
-  if(tab==='history')renderHistory();
+  if(tab==='history'){renderHistory();renderNigateHistory();}
 }
 
 function setHistoryTabEnabled(enabled){
@@ -1039,6 +1057,7 @@ function startQuiz(){
   }
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=false;
+  isNigateMode=false;
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
@@ -1054,6 +1073,7 @@ function retryQuiz(){
   quizQueue=shuffled;
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=true;
+  isNigateMode=false;
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
@@ -1068,6 +1088,7 @@ function retryWrongOnly(){
   quizQueue=shuffle(wrongs);
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=true;
+  isNigateMode=false;
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
@@ -1497,6 +1518,32 @@ function _showEvaEffect(mode, episode, callback){
   }, 5500);
 }
 
+
+// ── 苦手克服履歴 ──
+function saveNigateHistory(e){
+  const h=JSON.parse(localStorage.getItem('nigateHistory')||'[]');
+  h.unshift(e);
+  if(h.length>50)h.pop();
+  localStorage.setItem('nigateHistory',JSON.stringify(h));
+}
+
+function renderNigateHistory(){
+  const h=JSON.parse(localStorage.getItem('nigateHistory')||'[]');
+  const el=document.getElementById('nigate-history-list');
+  if(!el)return;
+  if(!h.length){el.innerHTML='<div style="color:#aaa;font-size:13px;text-align:center;padding:16px;">まだ記録がありません</div>';return;}
+  el.innerHTML=h.map(function(e){
+    const d=new Date(e.date);
+    const ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+(d.getDate())+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    const pct=e.pct||0;
+    const col=pct>=60?'#16a34a':'#dc2626';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee;font-size:13px;">'
+      +'<div style="color:#555;">'+ds+'</div>'
+      +'<div style="font-weight:700;color:'+col+';">'+e.score+'/'+e.total+'問 ('+pct+'%)</div>'
+      +'</div>';
+  }).join('');
+}
+
 // ===== HISTORY =====
 function saveHistory(e){
   const h=JSON.parse(localStorage.getItem('quizHistory')||'[]');
@@ -1768,6 +1815,7 @@ function _startNigateQuiz(){
   quizQueue=shuffle(pool);
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=true;
+  isNigateMode=true;
   settings={subject:'苦手克服',order:'random',count:quizQueue.length};
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
