@@ -1755,6 +1755,57 @@ function _sendFeedback(){
   }
 }
 
+
+// ── 定期応援メッセージ ──
+var _periodicTimer = null;
+var _periodicMsgs = [
+  'やればできる！あきらめるな！',
+  '積み重ねが合格を呼ぶ！',
+  '今日の努力が明日の自信になる！',
+  '過去問は裏切らない！',
+  '合格まであと一歩！',
+  '毎日続けることが最強の武器！',
+  'やった分だけ近づいている！',
+  '今日も一問一答！君ならできる！',
+  '諦めた瞬間が唯一の失敗だ！',
+  '努力は必ず報われる！',
+  '一問一答、着実に積み上げよう！',
+  'コツコツやれば必ず結果が出る！',
+  '苦手問題こそチャンス！',
+  '解説をしっかり読むのが近道！',
+  '今日も来てくれてありがとう！'
+];
+
+function _showPeriodicMsg(){
+  var screen = document.querySelector('.screen.active');
+  if(!screen) return;
+  var isQuiz = screen.id === 'screen-quiz';
+  if(isQuiz) return; // クイズ中はスキップ
+
+  var toast = document.getElementById('greeting-toast');
+  if(!toast || toast.style.opacity === '1') return; // 表示中はスキップ
+
+  // 試験カウントダウン
+  var examDate = new Date('2026-05-24T00:00:00');
+  var diffDays = Math.ceil((examDate - new Date()) / (1000*60*60*24));
+  var countdown = diffDays > 0 ? '試験まであと'+diffDays+'日！' : diffDays===0 ? '今日が試験日！' : '';
+
+  var msg = _periodicMsgs[Math.floor(Math.random()*_periodicMsgs.length)];
+  toast.textContent = (countdown ? countdown : '') + msg;
+  toast.style.display = 'block';
+  toast.style.opacity = '1';
+  setTimeout(function(){
+    toast.style.opacity = '0';
+    setTimeout(function(){ toast.style.display='none'; }, 500);
+  }, 3500);
+}
+
+function _startPeriodicMsg(){
+  if(_periodicTimer) clearInterval(_periodicTimer);
+  // 45秒おきに表示
+  _periodicTimer = setInterval(_showPeriodicMsg, 45000);
+}
+
 // ── ニックネーム変更 ──
 var _selectedEditHonorific = 'さん';
 
@@ -1855,22 +1906,43 @@ function _showGreeting(name, honorific){
   if(_ht) _ht.textContent = '📊 ' + name + honorific + 'の受験履歴';
   var h = new Date().getHours();
   var greet = h>=5&&h<10 ? 'おはようございます' : h>=10&&h<17 ? 'こんにちは' : h>=17&&h<21 ? 'こんばんは' : 'お疲れ様です';
+
+  // 試験までのカウントダウン（2026年5月24日）
+  var examDate = new Date('2026-05-24T00:00:00');
+  var now = new Date();
+  var diffDays = Math.ceil((examDate - now) / (1000*60*60*24));
+  var countdown = '';
+  if(diffDays > 0){
+    countdown = '試験まであと' + diffDays + '日！';
+  } else if(diffDays === 0){
+    countdown = '今日が試験日！';
+  } else {
+    countdown = '試験お疲れ様でした！';
+  }
+
+  // 煽りメッセージ
   var msgs = [
-    '今日も頑張りましょう！',
-    '一問一答、着実に積み上げましょう！',
+    'やればできる！あきらめるな！',
+    '積み重ねが合格を呼ぶ！',
+    '今日の努力が明日の自信になる！',
+    '過去問は裏切らない！',
     '合格まであと一歩！',
-    '継続は力なり！',
-    'コツコツやれば必ず結果が出ます！'
+    '毎日続けることが最強の武器！',
+    'やった分だけ近づいている！',
+    '今日も一問一答！君ならできる！',
+    '諦めた瞬間が唯一の失敗だ！',
+    '努力は必ず報われる！'
   ];
   var msg = msgs[Math.floor(Math.random()*msgs.length)];
+
   var toast = document.getElementById('greeting-toast');
-  toast.textContent = greet + '、' + name + honorific + '！' + msg;
+  toast.textContent = greet + '、' + name + honorific + '！' + countdown + msg;
   toast.style.display = 'block';
   toast.style.opacity = '1';
   setTimeout(function(){
     toast.style.opacity = '0';
     setTimeout(function(){ toast.style.display='none'; }, 500);
-  }, 3500);
+  }, 4500);
 }
 
 function _closeWhatsNew(){
@@ -1909,6 +1981,7 @@ function _initNickname(){
       setTimeout(function(){ _showGreeting(name); }, 800);
     }
   }
+  _startPeriodicMsg();
 }
 
 // ── アクセスログ送信 ──
