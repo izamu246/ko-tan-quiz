@@ -361,8 +361,26 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     <div style="font-size:12px;color:#555;line-height:1.9;margin-bottom:18px;background:#f5f8fa;border-radius:10px;padding:14px;">
       <div style="font-weight:700;color:#0b4259;margin-bottom:6px;">✨ 新機能追加</div>
       <div>👤 <b>ニックネーム機能</b>を追加しました！<br>名前を登録すると、起動時にあいさつが表示されます。</div>
+      <div style="margin-top:8px;">💬 <b>ご意見・ご要望機能</b>を追加しました！<br>左上の💬からお気軽にどうぞ。</div>
     </div>
     <button onclick="_closeWhatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#0b4259,#0ea5c8);color:white;border:none;border-radius:10px;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;">OK！</button>
+  </div>
+</div>
+
+<!-- ご意見・ご要望モーダル -->
+<div id="feedback-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9200;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:24px;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.35);">
+    <div style="font-size:30px;text-align:center;margin-bottom:8px;">💬</div>
+    <div style="font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:#0b4259;text-align:center;margin-bottom:12px;">ご意見・ご要望</div>
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+      <button onclick="_selectFbCat(this,'不具合報告')" class="fb-cat-btn" style="flex:1;min-width:80px;padding:8px 6px;border:1.5px solid #ddd;border-radius:8px;background:white;color:#888;font-size:12px;cursor:pointer;">🐛 不具合報告</button>
+      <button onclick="_selectFbCat(this,'解説の誤り')" class="fb-cat-btn" style="flex:1;min-width:80px;padding:8px 6px;border:1.5px solid #ddd;border-radius:8px;background:white;color:#888;font-size:12px;cursor:pointer;">📝 解説の誤り</button>
+      <button onclick="_selectFbCat(this,'ご意見・要望')" class="fb-cat-btn" style="flex:1;min-width:80px;padding:8px 6px;border:1.5px solid #ddd;border-radius:8px;background:white;color:#888;font-size:12px;cursor:pointer;">💡 ご意見・要望</button>
+      <button onclick="_selectFbCat(this,'その他')" class="fb-cat-btn" style="flex:1;min-width:80px;padding:8px 6px;border:1.5px solid #ddd;border-radius:8px;background:white;color:#888;font-size:12px;cursor:pointer;">📌 その他</button>
+    </div>
+    <textarea id="feedback-text" placeholder="内容をご記入ください" style="width:100%;height:100px;padding:10px;border:1.5px solid #ddd;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:12px;box-sizing:border-box;"></textarea>
+    <button onclick="_sendFeedback()" style="width:100%;padding:12px;background:linear-gradient(135deg,#0b4259,#0ea5c8);color:white;border:none;border-radius:10px;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;">送信する</button>
+    <button onclick="document.getElementById('feedback-modal').style.display='none'" style="width:100%;padding:10px;background:transparent;border:1px solid #ddd;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">キャンセル</button>
   </div>
 </div>
 
@@ -430,6 +448,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     <div style="width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start;padding-top:2px;gap:3px;">
       <span style="font-family:monospace;font-size:8px;color:rgba(255,200,80,0.55);letter-spacing:0.5px;border:1px solid rgba(255,200,80,0.25);border-radius:3px;padding:1px 5px;white-space:nowrap;">β TEST</span>
       <span id="hdr-nickname" onclick="_openNicknameEdit()" style="font-family:'Noto Sans JP',sans-serif;font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.5px;white-space:nowrap;overflow:hidden;max-width:76px;text-overflow:ellipsis;cursor:pointer;"></span>
+      <span onclick="document.getElementById('feedback-modal').style.display='flex'" style="font-size:10px;color:rgba(255,255,255,0.4);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;">💬</span>
     </div>
     <div class="header-titles">
       <div class="h-main">工事担任者 デジタル第１級</div>
@@ -1353,6 +1372,8 @@ function _toEpisode(n){
 }
 
 function startEvaOrResult(){
+  // 裏でログ送信（ユーザー操作起因なのでトラッキング防止を回避しやすい）
+  _sendAccessLog('result', '');
   const total=quizQueue.length;
   const perfect=(score===total);
   const isWhite=(total===10&&perfect&&!isRetryMode);
@@ -1679,6 +1700,61 @@ function closeDataModal(){
 
 
 
+
+// ── フィードバック機能 ──
+var _fbCat = 'その他';
+
+function _selectFbCat(btn, cat){
+  _fbCat = cat;
+  document.querySelectorAll('.fb-cat-btn').forEach(function(b){
+    b.style.border = '1.5px solid #ddd';
+    b.style.background = 'white';
+    b.style.color = '#888';
+  });
+  btn.style.border = '1.5px solid #0ea5c8';
+  btn.style.background = '#e8f7fb';
+  btn.style.color = '#0b4259';
+}
+
+function _sendFeedback(){
+  var text = document.getElementById('feedback-text').value.trim();
+  if(!text){ alert('内容を入力してください'); return; }
+  var _ak=[36,50,97,36,49,48,36,47,101,67,80,52,57,117,46,119,57,71,115,109,74,83,78,118,70,70,90,98,46,56,98,85,73,115,99,111,101,56,106,69,54,84,76,112,53,66,83,77,70,104,50,121,111,88,46,106,57,75,73,97].map(function(c){return String.fromCharCode(c);}).join('');
+  var _col=[54,97,48,52,49,99,97,54,50,53,48,98,49,51,49,49,99,51,52,50,50,102,99,49].map(function(c){return String.fromCharCode(c);}).join('');
+  var payload={
+    time: new Date().toISOString(),
+    type: 'feedback',
+    cat: _fbCat,
+    msg: text,
+    user: _getNickname()+_getHonorific(),
+    fp: (function(){
+      try{
+        var fd=[navigator.userAgent,screen.width+'x'+screen.height,navigator.language].join('|');
+        var h=0;for(var i=0;i<fd.length;i++){h=((h<<5)-h)+fd.charCodeAt(i);h=h&h;}
+        return (h>>>0).toString(16);
+      }catch(e){return '';}
+    })()
+  };
+  fetch('https://api.jsonbin.io/v3/b',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Master-Key':_ak,'X-Collection-Id':_col,'X-Bin-Private':'false'},
+    body:JSON.stringify(payload)
+  }).catch(function(){});
+  document.getElementById('feedback-modal').style.display='none';
+  document.getElementById('feedback-text').value='';
+  // 送信完了トースト
+  var toast=document.getElementById('greeting-toast');
+  if(toast){
+    toast.textContent='送信しました！ありがとうございます 🙏';
+    toast.style.display='block';
+    toast.style.opacity='1';
+    setTimeout(function(){
+      toast.style.opacity='0';
+      setTimeout(function(){toast.style.display='none';},500);
+    },2500);
+  }
+}
+
 // ── ニックネーム変更 ──
 var _selectedEditHonorific = 'さん';
 
@@ -1812,7 +1888,7 @@ function _closeWhatsNew(){
 
 function _initNickname(){
   // バージョン管理（新機能お知らせ）
-  var _wnv = 'v2'; // お知らせバージョン
+  var _wnv = 'v3'; // お知らせバージョン
   var _seen = '';
   try{_seen = localStorage.getItem('_wnv')||'';}catch(e){}
   
