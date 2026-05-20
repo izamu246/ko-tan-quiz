@@ -532,6 +532,8 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           <button class="btn-toggle" data-val="15" onclick="selectBtn(this,'count-btns')">15問</button>
           <button class="btn-toggle" data-val="20" onclick="selectBtn(this,'count-btns')">20問</button>
           <button class="btn-toggle" data-val="25" onclick="selectBtn(this,'count-btns')">25問</button>
+          <button class="btn-toggle" id="btn-30" data-val="30" onclick="selectBtn(this,'count-btns')" style="display:none;">30問</button>
+          <button class="btn-toggle" id="btn-40" data-val="40" onclick="selectBtn(this,'count-btns')" style="display:none;">40問</button>
           <button class="btn-toggle" id="btn-50" data-val="50" onclick="selectBtn(this,'count-btns')" style="display:none;">50問</button>
         </div>
         <div class="divider"></div>
@@ -947,9 +949,23 @@ function buildYearButtons(){
 
 function updateCount50(){
   const sub=document.querySelector('#subject-btns .btn-toggle.active');
-  const show=sub&&sub.dataset.val==='両方';
-  document.getElementById('btn-50').style.display=show?'inline-block':'none';
-  if(!show){const s=document.querySelector('#count-btns .btn-toggle.active');if(s&&s.dataset.val==='50'){s.classList.remove('active');document.querySelector('#count-btns .btn-toggle[data-val="10"]').classList.add('active');settings.count=10;}}
+  const isBoth=sub&&sub.dataset.val==='両方';
+  // 両方：5,15,25を非表示・30,40,50を表示
+  // 単科目：5,15,25を表示・30,40,50を非表示
+  document.querySelector('[data-val="5"]').style.display=isBoth?'none':'';
+  document.querySelector('[data-val="15"]').style.display=isBoth?'none':'';
+  document.querySelector('[data-val="25"]').style.display=isBoth?'none':'';
+  document.getElementById('btn-30').style.display=isBoth?'inline-block':'none';
+  document.getElementById('btn-40').style.display=isBoth?'inline-block':'none';
+  document.getElementById('btn-50').style.display=isBoth?'inline-block':'none';
+  // 現在選択中のボタンが非表示になったら10問に戻す
+  const s=document.querySelector('#count-btns .btn-toggle.active');
+  const hiddenVals=isBoth?['5','15','25']:['30','40','50'];
+  if(s&&hiddenVals.includes(s.dataset.val)){
+    s.classList.remove('active');
+    document.querySelector('#count-btns .btn-toggle[data-val="10"]').classList.add('active');
+    settings.count=10;
+  }
 }
 
 // ===== TAB =====
@@ -1381,8 +1397,8 @@ function _toEpisode(n){
 function startEvaOrResult(){
   const total=quizQueue.length;
   const perfect=(score===total);
-  const isWhite=(total===10&&perfect&&!isRetryMode);
-  const isBlack=(total>=15&&perfect&&!isRetryMode);
+  const isWhite=(total===5&&perfect&&!isRetryMode);
+  const isBlack=(total>=10&&perfect&&!isRetryMode);
 
   if(isWhite){
     _evaCountWhite++;
@@ -1820,6 +1836,46 @@ function _startPeriodicMsg(){
   if(_periodicTimer) clearInterval(_periodicTimer);
   // 45秒おきに表示
   _periodicTimer = setInterval(_showPeriodicMsg, 45000);
+}
+
+
+// ── 科目トグル ──
+var _subGijutsu = true;
+var _subHoki = false;
+
+function toggleSubject(sub){
+  if(sub==='技術'){
+    _subGijutsu = !_subGijutsu;
+    document.getElementById('btn-gijutsu').classList.toggle('active', _subGijutsu);
+  } else {
+    _subHoki = !_subHoki;
+    document.getElementById('btn-hoki').classList.toggle('active', _subHoki);
+  }
+  // settings.subjectを更新
+  if(_subGijutsu && _subHoki) settings.subject='両方';
+  else if(_subGijutsu) settings.subject='技術';
+  else if(_subHoki) settings.subject='法規';
+  else settings.subject='none';
+  _updateCountBtns();
+}
+
+function _updateCountBtns(){
+  const isBoth = (_subGijutsu && _subHoki);
+  // 単科目：5,10,15,20,25 / 両方：10,20,30,40,50
+  document.getElementById('cnt-5').style.display  = isBoth?'none':'';
+  document.getElementById('cnt-15').style.display = isBoth?'none':'';
+  document.getElementById('cnt-25').style.display = isBoth?'none':'';
+  document.getElementById('cnt-30').style.display = isBoth?'':'none';
+  document.getElementById('cnt-40').style.display = isBoth?'':'none';
+  document.getElementById('btn-50').style.display = isBoth?'':'none';
+
+  // 現在のactiveボタンが非表示になったら10問に戻す
+  const activeBtn = document.querySelector('#count-btns .btn-toggle.active');
+  if(activeBtn && activeBtn.style.display==='none'){
+    activeBtn.classList.remove('active');
+    document.getElementById('cnt-10').classList.add('active');
+    settings.count=10;
+  }
 }
 
 // ── ニックネーム変更 ──
