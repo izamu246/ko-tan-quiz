@@ -180,6 +180,7 @@ function renderUsers(logs){
         <span>🕐 ${jst(latest.time)}</span>
         <span>📡 ${ls.length}回</span>
         ${plays?`<span>🎮 ${plays}</span>`:''}
+        ${ls[0].tq?`<span>📝 ${ls[0].tq}問</span>`:''}
         <span class="fp-tag">${fp.slice(0,8)}</span>
       </div>
       ${names.length>1?`<div style="margin-top:8px;font-size:0.68rem;color:var(--dim)">名前: ${names.join(' → ')}</div>`:''}
