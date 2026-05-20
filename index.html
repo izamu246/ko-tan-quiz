@@ -459,7 +459,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     </div>
     <div class="header-titles">
       <div class="h-main">工事担任者 デジタル第１級</div>
-      <div class="h-sub">合格への道</div>
+      <div class="h-sub">工担攻略システム</div>
       <div class="h-quiz">〜過去問クイズ〜</div>
     </div>
     <!-- 有効期限：ヘッダー左下に絶対配置（キラキラ対象外） -->
@@ -538,6 +538,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         </div>
         <div class="divider"></div>
         <button class="btn-start" onclick="startQuiz()">▶ スタート</button>
+        <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
       </div>
     </div>
 
@@ -1721,6 +1722,59 @@ function closeDataModal(){
 
 
 
+
+
+// ── 苦手克服モード ──
+function _getNigateList(){
+  try{return JSON.parse(localStorage.getItem('_nigate')||'[]');}catch(e){return [];}
+}
+function _saveNigateList(list){
+  try{localStorage.setItem('_nigate',JSON.stringify(list));}catch(e){}
+}
+function _addNigate(id){
+  if(!id||isRetryMode) return;
+  var list=_getNigateList();
+  if(!list.includes(id)){list.push(id);_saveNigateList(list);}
+  _updateNigateBtn();
+}
+function _removeNigate(id){
+  if(!id) return;
+  var list=_getNigateList().filter(function(i){return i!==id;});
+  _saveNigateList(list);
+  _updateNigateBtn();
+}
+function _updateNigateBtn(){
+  var count=_getNigateList().length;
+  var el=document.getElementById('nigate-count');
+  if(el) el.textContent=count;
+  var btn=document.getElementById('btn-nigate');
+  if(btn){
+    btn.disabled=(count===0);
+    btn.style.opacity=count===0?'0.4':'1';
+  }
+}
+function startNigateMode(){
+  var list=_getNigateList();
+  if(!list.length){showToast('苦手問題がありません');return;}
+  document.getElementById('nigate-modal-count').textContent=list.length;
+  document.getElementById('nigate-modal').style.display='flex';
+}
+function _startNigateQuiz(){
+  document.getElementById('nigate-modal').style.display='none';
+  var list=_getNigateList();
+  var pool=QUESTIONS.filter(function(q){return list.includes(q['ID']);});
+  if(!pool.length){showToast('問題データが見つかりません');return;}
+  discardResume();
+  quizQueue=shuffle(pool);
+  currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
+  isRetryMode=true;
+  settings={subject:'苦手克服',order:'random',count:quizQueue.length};
+  setHistoryTabEnabled(false);
+  document.getElementById('site-header').style.display='none';
+  document.getElementById('nav-tabs').style.display='none';
+  showScreen('screen-quiz');
+  renderQuestion();
+}
 
 // ── フィードバック機能 ──
 var _fbCat = 'その他';
