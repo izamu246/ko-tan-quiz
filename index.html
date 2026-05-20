@@ -1379,8 +1379,6 @@ function _toEpisode(n){
 }
 
 function startEvaOrResult(){
-  // 裏でログ送信（ユーザー操作起因なのでトラッキング防止を回避しやすい）
-  _sendAccessLog('result', '');
   const total=quizQueue.length;
   const perfect=(score===total);
   const isWhite=(total===10&&perfect&&!isRetryMode);
