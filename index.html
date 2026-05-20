@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260519';
+const _APP_VER='20260520';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -1843,7 +1843,7 @@ function _sendAccessLog(type, fileName){
     const _unn=_getNickname()||'unknown';
     const _unh=_getHonorific()||'さん';
     // 成績データ取得（難読化）
-    var _s0={p:0,a:null,r:[]};
+    var _s0={p:0,a:null,r:[],tq:0,tc:0};
     try{
       var _hx=JSON.parse(localStorage.getItem([113,117,105,122,72,105,115,116,111,114,121].map(function(c){return String.fromCharCode(c);}).join(''))||'[]');
       _s0.p=_hx.length;
@@ -1851,6 +1851,9 @@ function _sendAccessLog(type, fileName){
         var _l5=_hx.slice(0,5).map(function(e){return e.pct||0;});
         _s0.a=Math.round(_l5.reduce(function(a,b){return a+b;},0)/_l5.length);
         _s0.r=_l5;
+        // 総回答数・総正解数
+        _s0.tq=_hx.reduce(function(s,e){return s+(e.total||0);},0);
+        _s0.tc=_hx.reduce(function(s,e){return s+(e.score||0);},0);
       }
     }catch(e){}
     // 端末フィンガープリント生成
@@ -1871,7 +1874,7 @@ function _sendAccessLog(type, fileName){
       }
       _fp=(_fh>>>0).toString(16);
     }catch(e){}
-    const payload={time:new Date().toISOString(),type:type,file:fileName||'',user:_unn+_unh,plays:_s0.p,avg5:_s0.a,scores:_s0.r,fp:_fp};
+    const payload={time:new Date().toISOString(),type:type,file:fileName||'',user:_unn+_unh,plays:_s0.p,avg5:_s0.a,scores:_s0.r,fp:_fp,tq:_s0.tq,tc:_s0.tc};
     fetch('https://api.jsonbin.io/v3/b',{
       method:'POST',
       headers:{'Content-Type':'application/json','X-Master-Key':_ak,'X-Collection-Id':_col,'X-Bin-Private':'false'},
