@@ -1160,7 +1160,7 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
     if(idx===correct){b.classList.add('reveal-correct');if(ov){ov.textContent='⭕';ov.classList.add('show');}}
     if(idx===choiceIdx&&!isCorrect){b.classList.add('wrong');if(ov){ov.textContent='❌';ov.classList.add('show');}}
   });
-  if(isCorrect){score++;combo++;if(combo>maxCombo)maxCombo=combo;}else{combo=0;}
+  if(isCorrect){score++;combo++;if(combo>maxCombo)maxCombo=combo;_removeNigate(q['ID']);}else{combo=0;_addNigate(q['ID']);}
   animateStamp(isCorrect);
   renderExplanation(q, displayCorrectNum);
   sessionResults.push({q,chosen:choiceIdx,correct:isCorrect,displayCorrectNum});
