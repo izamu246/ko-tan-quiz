@@ -141,7 +141,7 @@ async function loadLogs(){
     console.log('bins count:', bins.length, 'sample:', JSON.stringify(bins[0]).slice(0,100));
     console.log('bins count:', bins.length);
     if(!bins.length){document.getElementById('user-area').innerHTML='<div class="empty">データなし</div>';updateStats([]);return;}
-    const details=await Promise.all(bins.slice(0,500).map(b=>
+    const details=await Promise.all(bins.slice(0,100).map(b=>
       fetch(`${_BASE}/${b.record||b.id||b}`,{headers:{'X-Master-Key':_k1}}).then(r=>r.json()).catch(()=>null)
     ));
     allLogs=details.filter(d=>d&&d.record).map(d=>d.record).sort((a,b)=>new Date(b.time)-new Date(a.time));
@@ -258,7 +258,6 @@ function renderFeedback(logs){
 }
 
 loadLogs();
-setInterval(loadLogs,5*60*1000);
 </script>
 </body>
 </html>
