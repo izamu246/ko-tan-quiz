@@ -2378,18 +2378,19 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 // active=true（デフォルト）：青文字・クリック有効
 function linkKeywords(text, keywords, active=true){
   if(!keywords||!keywords.length) return text;
-  const sorted=[...keywords].sort((a,b)=>b.length-a.length);
-  // textはescHtml済みの文字列なのでキーワードもエスケープして検索
-  sorted.forEach(kw=>{
+  var sorted=keywords.slice().sort(function(a,b){return b.length-a.length;});
+  sorted.forEach(function(kw){
     if(!kw) return;
-    const escapedKw=kw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const re=new RegExp(escapedKw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
-    const url='https://www.google.com/search?q='+encodeURIComponent(kw+'　工事担任者');
+    var escapedKw=kw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var re=new RegExp(escapedKw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
+    var url='https://www.google.com/search?q='+encodeURIComponent(kw)+encodeURIComponent('　工事担任者');
+    var tag;
     if(active){
-      text=text.replace(re,`<a href="${url}" target="_blank" rel="noopener" class="kw-link" style="color:#1a73e8;text-decoration:underline;font-weight:600;">${escapedKw}</a>`);
+      tag='<a href="'+url+'" target="_blank" rel="noopener" class="kw-link" style="color:#1a73e8;text-decoration:underline;font-weight:600;">'+escapedKw+'</a>';
     } else {
-      text=text.replace(re,`<a href="${url}" target="_blank" rel="noopener" class="kw-link" style="color:inherit;text-decoration:none;pointer-events:none;">${escapedKw}</a>`);
+      tag='<a href="'+url+'" target="_blank" rel="noopener" class="kw-link" style="color:inherit;text-decoration:none;pointer-events:none;">'+escapedKw+'</a>';
     }
+    text=text.replace(re,tag);
   });
   return text;
 }
