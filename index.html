@@ -877,8 +877,9 @@ function autoRefreshData(){
       if(!xlsx.length)throw new Error('Excelが見つかりません');
       const latestName=xlsx[0].name;
       const cachedName=localStorage.getItem('_qfn')||'';
-      // ファイル名が同じ＆3日以内→キャッシュ継続
-      if(latestName===cachedName&&_hasCacheData&&_age<3*24*60*60*1000){
+      const cachedVer=localStorage.getItem('_qver')||'';
+      // ファイル名が同じ＆バージョンが同じ＆3日以内→キャッシュ継続
+      if(latestName===cachedName&&cachedVer===_APP_VER&&_hasCacheData&&_age<3*24*60*60*1000){
         const ok=restoreDataFromStorage();
         if(ok){
           buildYearButtons();
@@ -917,6 +918,7 @@ function autoRefreshData(){
         localStorage.setItem('quizData',JSON.stringify(QUESTIONS));
         localStorage.setItem('_qdc',String(new Date().getTime()));
         localStorage.setItem('_qfn',name);
+        localStorage.setItem('_qver',_APP_VER);
       }catch(e){console.warn('保存失敗:',e);}
       buildYearButtons();
       setStatusBar(true,QUESTIONS.length+'問を取得しました。画像をキャッシュ中...',85);
