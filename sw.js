@@ -1,4 +1,4 @@
-const _cv='kotan-v3';
+const _cv='kotan-v4';
 
 self.addEventListener('install',e=>{
   self.skipWaiting();
