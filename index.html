@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260524';
+const _APP_VER='20260526';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -499,6 +499,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 
     <!-- データ取得ステータスバー -->
     <div id="data-status-bar" style="display:none;background:linear-gradient(135deg,#0b4259,#0ea5c8);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;color:white;font-size:12px;font-family:'Noto Sans JP',sans-serif;">
+    <span id="offline-badge" style="display:none;background:#f59e0b;color:white;font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700;margin-bottom:8px;display:none;">📴 オフラインモード</span>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
         <span id="data-status-icon">⏳</span>
         <span id="data-status-msg" style="font-weight:700;">データを取得中...</span>
@@ -846,7 +847,12 @@ function autoRefreshData(){
     const ok=restoreDataFromStorage();
     if(ok){
       buildYearButtons();
-      setStatusBar(true,'オフラインモード：保存済みデータで動作中',100,true,false);
+      setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
+      setTimeout(()=>{
+        setStatusBar(false);
+        // さりげなくオフライン表示
+        try{document.getElementById('offline-badge').style.display='inline';}catch(e){}
+      },2000);
       setTimeout(()=>setStatusBar(false),3000);
       return;
     }
@@ -857,7 +863,11 @@ function autoRefreshData(){
     const ok=restoreDataFromStorage();
     if(ok){
       buildYearButtons();
-      setStatusBar(true,'オフライン：保存済みデータで動作中（更新は次回オンライン時）',100,false,true);
+      setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
+      setTimeout(()=>{
+        setStatusBar(false);
+        try{document.getElementById('offline-badge').style.display='inline';}catch(e){}
+      },2000);
     }else{
       setStatusBar(true,'オフライン：データがありません。一度オンラインで起動してください',100,false,true);
     }
@@ -1225,14 +1235,13 @@ function renderExplanation(q, correctNum){
   const area=document.getElementById('explanation-area');
   const trap=(q['exp_kakutu']||'').trim();
   const norm=(q['exp_normal']||'').trim();
-  const kws=(q['keywords']||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
   const maru=correctNum&&MARU[correctNum]?MARU[correctNum]:'';
   let html='';
   if(trap){
-    html+=`<div class="exp-trap-box"><div class="exp-trap-label">⚠️ 要注意ポイント</div>${linkKeywords(escHtml(trap),kws)}</div>`;
+    html+=`<div class="exp-trap-box"><div class="exp-trap-label">⚠️ 要注意ポイント</div>${escHtml(trap)}</div>`;
   }
   if(norm||maru){
-    const normHtml=norm?linkKeywords(escHtml(norm),kws):'';
+    const normHtml=norm?escHtml(norm):'';
     const maruHtml=maru?`<span style="font-weight:700;color:var(--primary-dark);font-size:14px;">正解は ${maru}</span><br><br>`:'';
     html+=`<div class="exp-box exp-normal-box" style="margin-top:${trap?'8px':'12px'};"><div class="exp-label">📖 解説</div>${maruHtml}${normHtml}</div>`;
   }
