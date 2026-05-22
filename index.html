@@ -2376,21 +2376,22 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 // キーワードをGoogle検索リンクに変換
 // active=false のとき：黒文字・クリック無効（解答前の選択肢用）
 // active=true（デフォルト）：青文字・クリック有効
-function linkKeywords(html, keywords, active=true){
-  if(!keywords||!keywords.length) return html;
+function linkKeywords(text, keywords, active=true){
+  if(!keywords||!keywords.length) return text;
   const sorted=[...keywords].sort((a,b)=>b.length-a.length);
+  // textはescHtml済みの文字列なのでキーワードもエスケープして検索
   sorted.forEach(kw=>{
     if(!kw) return;
-    const escaped=kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    const re=new RegExp(escaped,'g');
+    const escapedKw=kw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const re=new RegExp(escapedKw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
     const url='https://www.google.com/search?q='+encodeURIComponent(kw+'　工事担任者');
     if(active){
-      html=html.replace(re,`<a href="${url}" target="_blank" rel="noopener" class="kw-link" style="color:#1a73e8;text-decoration:underline;font-weight:600;">${kw}</a>`);
+      text=text.replace(re,`<a href="${url}" target="_blank" rel="noopener" class="kw-link" style="color:#1a73e8;text-decoration:underline;font-weight:600;">${escapedKw}</a>`);
     } else {
-      html=html.replace(re,`<a href="${url}" target="_blank" rel="noopener" class="kw-link" style="color:inherit;text-decoration:none;pointer-events:none;">${kw}</a>`);
+      text=text.replace(re,`<a href="${url}" target="_blank" rel="noopener" class="kw-link" style="color:inherit;text-decoration:none;pointer-events:none;">${escapedKw}</a>`);
     }
   });
-  return html;
+  return text;
 }
 function openLightbox(src){document.getElementById('lightbox-img').src=src;document.getElementById('lightbox').classList.add('open');}
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
