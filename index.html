@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260528';
+const _APP_VER='20260529';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -1275,7 +1275,7 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
         answered=false;
         document.getElementById('explanation-area').innerHTML='';
         btnNext.style.display='none';
-        showQuestion();
+        renderQuestion();
       };
       btnNext.style.display='block';
       return;
@@ -1958,7 +1958,7 @@ function startKaerema10(){
 
   showScreen('screen-quiz');
   _startKaerema10Telop();
-  showQuestion();
+  renderQuestion();
 }
 
 function kaerema10OnWrong(){
@@ -2151,40 +2151,33 @@ var _periodicMsgs = [
 ];
 
 function _showPeriodicMsg(){
-  // 帰れま10モード中は専用メッセージを流す
+  var toast=document.getElementById('greeting-toast');
+  var inner=document.getElementById('greeting-toast-inner');
+  if(!inner) return;
+
+  // 帰れま10モード中は専用メッセージを流す（表示中でも上書き）
   if(isKaerema10Mode){
-    var toast=document.getElementById('greeting-toast');
-    var inner=document.getElementById('greeting-toast-inner');
-    if(!inner) return;
     inner.textContent='🔥 帰れま10モード中　　　🔥 帰れま10モード中　　　🔥 帰れま10モード中';
     inner.style.animation='none';
     inner.offsetHeight;
     inner.style.animation='_toastScroll 12s linear forwards';
     toast.style.display='block';
     toast.style.opacity='1';
-    setTimeout(function(){
-      toast.style.opacity='0';
-      setTimeout(function(){toast.style.display='none';},500);
-    },12000);
     return;
   }
 
   var screen = document.querySelector('.screen.active');
   if(!screen) return;
   var isQuiz = screen.id === 'screen-quiz';
-  if(isQuiz) return; // クイズ中はスキップ
+  if(isQuiz) return;
 
-  var toast = document.getElementById('greeting-toast');
-  if(!toast || toast.style.opacity === '1') return; // 表示中はスキップ
+  if(!toast || toast.style.opacity === '1') return;
 
-  // 試験カウントダウン
   var examDate = new Date('2026-05-24T00:00:00');
   var diffDays = Math.ceil((examDate - new Date()) / (1000*60*60*24));
   var countdown = diffDays > 0 ? '試験まであと'+diffDays+'日！' : diffDays===0 ? '今日が試験日！' : '';
 
   var msg = _periodicMsgs[Math.floor(Math.random()*_periodicMsgs.length)];
-  var inner = document.getElementById('greeting-toast-inner');
-  if(!inner) return;
   inner.textContent = (countdown ? countdown : '') + msg;
   inner.style.animation = 'none';
   inner.offsetHeight;
