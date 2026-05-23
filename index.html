@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260529';
+const _APP_VER='20260530';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -1957,6 +1957,7 @@ function startKaerema10(){
   answered=false;
 
   showScreen('screen-quiz');
+  setHistoryTabEnabled(false);
   _startKaerema10Telop();
   renderQuestion();
 }
@@ -2198,8 +2199,14 @@ function _startPeriodicMsg(){
 // 帰れま10モード中はテロップを短い間隔で流す
 function _startKaerema10Telop(){
   if(_periodicTimer) clearInterval(_periodicTimer);
-  _showPeriodicMsg();
-  _periodicTimer = setInterval(_showPeriodicMsg, 14000);
+  _periodicTimer=null;
+  // 既存テロップを即消してから新しいものを表示
+  var toast=document.getElementById('greeting-toast');
+  if(toast){toast.style.opacity='0';toast.style.display='none';}
+  setTimeout(function(){
+    _showPeriodicMsg();
+    _periodicTimer=setInterval(_showPeriodicMsg,14000);
+  },100);
 }
 
 
