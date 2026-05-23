@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260531';
+const _APP_VER='20260532';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -625,19 +625,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         </div>
         <div class="result-btns">
           <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度</button>
-          <button class="btn-retry" id="btn-retry-wrongs" onclick="retryWrongOnly()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">❌ 間違えた問題だけ解き直す</button>
-          <!-- 帰れま10スイッチ -->
-          <div style="display:flex;align-items:center;justify-content:space-between;background:#fff5f5;border:1.5px solid #fca5a5;border-radius:12px;padding:12px 16px;margin-top:4px;">
-            <div>
-              <div style="font-size:13px;font-weight:700;color:#7c1d1d;">🔥 帰れま10モード</div>
-              <div style="font-size:10px;color:#888;margin-top:2px;">正解するまで先に進めない</div>
-            </div>
-            <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">
-              <input type="checkbox" id="kaerema10-switch" onchange="toggleKaerema10Switch(this)" style="opacity:0;width:0;height:0;">
-              <span id="kaerema10-switch-slider" style="position:absolute;inset:0;background:#ddd;border-radius:99px;transition:0.3s;"></span>
-              <span id="kaerema10-switch-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
-            </label>
-          </div>
+          <button class="btn-retry" id="btn-retry-wrongs" onclick="retryWrongOnly()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">❌ 間違えた<span id="wrongs-count"></span>問だけ解き直す</button>
           <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
