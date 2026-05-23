@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260530';
+const _APP_VER='20260531';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -1275,6 +1275,7 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
         answered=false;
         document.getElementById('explanation-area').innerHTML='';
         btnNext.style.display='none';
+        window.scrollTo(0,0);
         renderQuestion();
       };
       btnNext.style.display='block';
@@ -1963,14 +1964,11 @@ function startKaerema10(){
 }
 
 function kaerema10OnWrong(){
-  // 間違えたら同じ問題をキューの次に挿入
-  var currentQ=quizQueue[currentIdx];
-  quizQueue.splice(currentIdx+1,0,currentQ);
+  // 間違えても currentIdx を進めない（同じ問題を再表示するだけ）
   kaerema10Attempts++;
 }
 
 function kaerema10OnCorrect(){
-  // 正解したら結果を記録
   var currentQ=quizQueue[currentIdx];
   kaerema10Results.push({
     id:currentQ['ID'],
