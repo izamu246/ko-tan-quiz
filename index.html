@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260532';
+const _APP_VER='20260533';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -572,7 +572,17 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         <div class="divider"></div>
         <button class="btn-start" onclick="startQuiz()">▶ スタート</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
-        <button class="btn-start" id="btn-kaerema10" onclick="showKaerema10Modal()" style="margin-top:10px;background:linear-gradient(135deg,#7c1d1d,#e11d48);box-shadow:0 4px 14px rgba(225,29,72,.35);">🔥 帰れま10モード</button>
+        <!-- 帰れま10スイッチ -->
+        <div id="kaerema10-toggle" onclick="toggleKaerema10Home()" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:#fff5f5;border:1.5px solid #fca5a5;border-radius:12px;padding:12px 16px;cursor:pointer;transition:all 0.3s;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#7c1d1d;">🔥 帰れま10モード</div>
+            <div style="font-size:10px;color:#888;margin-top:2px;">正解するまで先に進めない</div>
+          </div>
+          <label style="position:relative;display:inline-block;width:44px;height:24px;pointer-events:none;">
+            <span id="k10-slider" style="position:absolute;inset:0;background:#ddd;border-radius:99px;transition:0.3s;"></span>
+            <span id="k10-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
+          </label>
+        </div>
       </div>
     </div>
 
@@ -1090,25 +1100,28 @@ function startQuiz(){
   );
   if(isSeq){
     quizQueue=pool.slice(0,settings.count);
+  }else if(settings.order==='year'&&settings.yearRound){
+    // 年度指定ランダム：その年度内でくじ引き式
+    const boxKey='_lotteryBox_yr_'+settings.yearRound+'_'+settings.subject;
+    quizQueue=lotteryDraw(pool, settings.count, boxKey);
   }else if(settings.subject==='両方'){
-    // 両方科目の場合は極力半々
+    // 両方科目：技術・法規それぞれの箱から引く
     const gPool=pool.filter(q=>q['科目']&&q['科目'].includes('技術'));
     const hPool=pool.filter(q=>q['科目']&&q['科目'].includes('法規'));
     const half=Math.floor(settings.count/2);
     const rem=settings.count%2;
-    const gPick=shuffle(gPool).slice(0,half+(rem===1?1:0));
-    const hPick=shuffle(hPool).slice(0,half);
+    const gPick=lotteryDraw(gPool, half+(rem===1?1:0), '_lotteryBox_gijutsu');
+    const hPick=lotteryDraw(hPool, half, '_lotteryBox_hoki');
     quizQueue=shuffle([...gPick,...hPick]);
   }else{
-    quizQueue=shuffle(pool).slice(0,settings.count);
+    // 単科目ランダム：くじ引き式
+    const boxKey='_lotteryBox_'+settings.subject;
+    quizQueue=lotteryDraw(pool, settings.count, boxKey);
   }
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=false;
   isNigateMode=false;
-  // スイッチON状態を確認
-  var sw=document.getElementById('kaerema10-switch');
-  if(sw&&sw.checked) isKaerema10Mode=true;
-  else isKaerema10Mode=false;
+  // isKaerema10Modeはホームスイッチの状態をそのまま使用
   kaerema10Attempts=0;kaerema10Results=[];
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
@@ -1155,6 +1168,42 @@ function retryWrongOnly(){
 }
 
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+// くじ引き式出題：箱から引いて戻さない。空になったら補充
+function lotteryDraw(pool, count, storageKey){
+  if(!pool.length) return [];
+  const allIds=pool.map(q=>q['ID']);
+
+  // 箱を読み込み
+  let box=[];
+  try{
+    const saved=localStorage.getItem(storageKey);
+    if(saved){
+      const parsed=JSON.parse(saved);
+      // 有効なIDのみ残す（問題データが変わった場合の対策）
+      box=parsed.filter(id=>allIds.includes(id));
+    }
+  }catch(e){}
+
+  const result=[];
+  while(result.length<count){
+    // 箱が空になったら全問補充してシャッフル
+    if(!box.length){
+      box=shuffle(allIds);
+    }
+    // 箱の先頭から引く
+    result.push(box.shift());
+    if(result.length>=count) break;
+  }
+
+  // 箱の状態を保存
+  try{ localStorage.setItem(storageKey, JSON.stringify(box)); }catch(e){}
+
+  // IDから問題オブジェクトに変換
+  const idToQ={};
+  pool.forEach(q=>{idToQ[q['ID']]=q;});
+  return result.map(id=>idToQ[id]).filter(Boolean);
+}
 
 // ===== RENDER QUESTION =====
 function renderQuestion(){
@@ -1223,7 +1272,16 @@ function renderQuestion(){
     const btn=document.createElement('button');btn.className='choice-btn';btn.dataset.idx=c.origIdx;btn.dataset.displayIdx=displayIdx;
     const lb=document.createElement('span');lb.className='choice-label';lb.textContent=labs[pos];btn.appendChild(lb);
     if(c.ci){const img=document.createElement('img');img.className='choice-img';img.src=imgSrc(c.ci);btn.appendChild(img);}
-    if(c.txt){const sp=document.createElement('span');sp.innerHTML=linkKeywords(escHtml(c.txt),kws,false);btn.appendChild(sp);}
+    if(c.txt){
+      const sp=document.createElement('span');
+      // 10文字以内の短い選択肢はリンクなし
+      if(c.txt.length<=10){
+        sp.textContent=c.txt;
+      } else {
+        sp.innerHTML=linkKeywords(escHtml(c.txt),kws,false);
+      }
+      btn.appendChild(sp);
+    }
     const ov=document.createElement('span');ov.className='stamp-overlay';btn.appendChild(ov);
     btn.onclick=()=>selectAnswer(btn,c.origIdx,q,displayCorrectNum);
     grid.appendChild(btn);
@@ -1488,7 +1546,7 @@ function showResult(){
   }
   // 苦手克服モードは通常履歴に含めない（別管理）
   discardResume();
-  _syncKaerema10Switch();
+  _syncKaerema10HomeSwitch();
   // 間違い解き直しボタン制御
   const wrongCount=sessionResults.filter(r=>!r.correct).length;
   const wBtn=document.getElementById('btn-retry-wrongs');
@@ -1881,30 +1939,48 @@ function closeDataModal(){
 
 
 
-// 帰れま10スイッチ
-function toggleKaerema10Switch(cb){
-  var slider=document.getElementById('kaerema10-switch-slider');
-  var knob=document.getElementById('kaerema10-switch-knob');
-  if(cb.checked){
+// 帰れま10ホームスイッチ
+function toggleKaerema10Home(){
+  isKaerema10Mode=!isKaerema10Mode;
+  var slider=document.getElementById('k10-slider');
+  var knob=document.getElementById('k10-knob');
+  var toggle=document.getElementById('kaerema10-toggle');
+  if(isKaerema10Mode){
     slider.style.background='#e11d48';
     knob.style.left='22px';
-    isKaerema10Mode=true;
+    toggle.style.background='#fff0f0';
+    toggle.style.borderColor='#e11d48';
+    _startKaerema10Telop();
   } else {
     slider.style.background='#ddd';
     knob.style.left='2px';
-    isKaerema10Mode=false;
+    toggle.style.background='#fff5f5';
+    toggle.style.borderColor='#fca5a5';
+    if(_periodicTimer) clearInterval(_periodicTimer);
+    _startPeriodicMsg();
   }
 }
 
-function _syncKaerema10Switch(){
-  var cb=document.getElementById('kaerema10-switch');
-  var slider=document.getElementById('kaerema10-switch-slider');
-  var knob=document.getElementById('kaerema10-switch-knob');
-  if(!cb) return;
-  cb.checked=isKaerema10Mode;
-  slider.style.background=isKaerema10Mode?'#e11d48':'#ddd';
-  knob.style.left=isKaerema10Mode?'22px':'2px';
+function _syncKaerema10HomeSwitch(){
+  var slider=document.getElementById('k10-slider');
+  var knob=document.getElementById('k10-knob');
+  var toggle=document.getElementById('kaerema10-toggle');
+  if(!slider) return;
+  if(isKaerema10Mode){
+    slider.style.background='#e11d48';
+    knob.style.left='22px';
+    toggle.style.background='#fff0f0';
+    toggle.style.borderColor='#e11d48';
+  } else {
+    slider.style.background='#ddd';
+    knob.style.left='2px';
+    toggle.style.background='#fff5f5';
+    toggle.style.borderColor='#fca5a5';
+  }
 }
+
+// 帰れま10スイッチ（旧・結果画面用・互換のため残す）
+function toggleKaerema10Switch(cb){}
 
 // ── 帰れま10モード ──
 var kaerema10Attempts=0; // 現在の問題の試行回数
