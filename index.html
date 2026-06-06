@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260534';
+const _APP_VER='20260535';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -365,9 +365,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     <div style="font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:#0b4259;text-align:center;margin-bottom:6px;">新機能追加！</div>
     <div style="font-family:'Noto Serif JP',serif;font-size:13px;color:#e11d48;font-weight:700;text-align:center;margin-bottom:14px;">明日の試験、まだ間に合う。</div>
     <div style="font-size:12px;color:#555;line-height:1.9;margin-bottom:18px;background:#f5f8fa;border-radius:10px;padding:14px;">
-      <div style="font-weight:700;color:#0b4259;margin-bottom:8px;">🎯 帰れま10モード</div>
-      <div>間違えた問題は<b>正解するまで何度でも出題</b>されます。逃げは許されない。追い込みにどうぞ。</div>
-      <div style="margin-top:10px;font-weight:700;color:#0b4259;">🔍 キーワード検索リンク</div>
+      <div style="font-weight:700;color:#0b4259;margin-bottom:8px;">🔍 キーワード検索リンク</div>
       <div>問題文の用語をタップすると<b>関連情報をすぐ検索</b>できます。</div>
     </div>
     <button onclick="_closeWhatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#e11d48,#0b4259);color:white;border:none;border-radius:10px;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;">やってみる！</button>
@@ -388,23 +386,6 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     <textarea id="feedback-text" placeholder="内容をご記入ください" style="width:100%;height:100px;padding:10px;border:1.5px solid #ddd;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:12px;box-sizing:border-box;"></textarea>
     <button onclick="_sendFeedback()" style="width:100%;padding:12px;background:linear-gradient(135deg,#0b4259,#0ea5c8);color:white;border:none;border-radius:10px;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;">送信する</button>
     <button onclick="document.getElementById('feedback-modal').style.display='none'" style="width:100%;padding:10px;background:transparent;border:1px solid #ddd;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">キャンセル</button>
-  </div>
-</div>
-
-<!-- 帰れま10モード説明モーダル -->
-<div id="kaerema10-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9200;align-items:center;justify-content:center;">
-  <div style="background:white;border-radius:16px;padding:28px 24px;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.5);text-align:center;">
-    <div style="font-size:40px;margin-bottom:8px;">🔥</div>
-    <div style="font-family:'Noto Serif JP',serif;font-size:17px;font-weight:700;color:#7c1d1d;margin-bottom:6px;">帰れま10モード</div>
-    <div style="font-family:'Noto Serif JP',serif;font-size:12px;color:#e11d48;font-weight:700;margin-bottom:14px;">正解するまで、先へは進めない。</div>
-    <div style="font-size:12px;color:#555;line-height:1.9;margin-bottom:18px;background:#fff5f5;border-radius:10px;padding:14px;text-align:left;">
-      <div>❌ 間違えたら<b>即同じ問題</b>が再出題されます</div>
-      <div style="margin-top:6px;">✅ 正解して初めて次の問題へ進めます</div>
-      <div style="margin-top:6px;">📊 何回目で正解したか記録されます</div>
-      <div style="margin-top:6px;">🎯 履歴は通常モードとは別管理です</div>
-    </div>
-    <button onclick="startKaerema10()" style="width:100%;padding:12px;background:linear-gradient(135deg,#7c1d1d,#e11d48);color:white;border:none;border-radius:10px;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;letter-spacing:1px;">🔥 逃げない！スタート</button>
-    <button onclick="document.getElementById('kaerema10-modal').style.display='none'" style="width:100%;padding:10px;background:transparent;border:1px solid #ddd;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">やっぱりやめる</button>
   </div>
 </div>
 
@@ -494,7 +475,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
       <div class="h-quiz">〜過去問クイズ〜</div>
     </div>
     <!-- 有効期限：ヘッダー左下に絶対配置（キラキラ対象外） -->
-    <div id="hdr-expiry" style="position:absolute;bottom:3px;left:8px;font-size:7px;color:rgba(255,255,255,0.25);letter-spacing:0.3px;font-family:monospace;white-space:nowrap;pointer-events:none;z-index:3;">有効期限 R08.05.31</div>
+    <div id="hdr-expiry" style="position:absolute;bottom:3px;left:8px;font-size:7px;color:rgba(255,255,255,0.25);letter-spacing:0.3px;font-family:monospace;white-space:nowrap;pointer-events:none;z-index:3;">有効期限 R08.06.30</div>
     <!-- キラキラエリア -->
     <div class="header-credit-wrap" id="credit-wrap">
       <div class="credit-halo" id="credit-halo"></div>
@@ -511,7 +492,6 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
   <div class="nav-tabs" id="nav-tabs">
     <button class="nav-tab active" id="tab-btn-quiz" onclick="showTab('quiz')">📝 クイズ</button>
     <button class="nav-tab" id="tab-btn-history" onclick="showTab('history')">📊 履歴</button>
-    <button class="nav-tab" id="tab-btn-kaerema10" onclick="showTab('kaerema10')">🔥 帰れま10</button>
   </div>
 
   <!-- QUIZ TAB -->
@@ -572,39 +552,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         <div class="divider"></div>
         <button class="btn-start" onclick="startQuiz()">▶ スタート</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
-        <!-- 帰れま10スイッチ -->
-        <div id="kaerema10-toggle" onclick="toggleKaerema10Home()" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:#fff5f5;border:1.5px solid #fca5a5;border-radius:12px;padding:12px 16px;cursor:pointer;transition:all 0.3s;">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:#7c1d1d;">🔥 帰れま10モード</div>
-            <div style="font-size:10px;color:#888;margin-top:2px;">正解するまで先に進めない</div>
-          </div>
-          <label style="position:relative;display:inline-block;width:44px;height:24px;pointer-events:none;">
-            <span id="k10-slider" style="position:absolute;inset:0;background:#ddd;border-radius:99px;transition:0.3s;"></span>
-            <span id="k10-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
-          </label>
-        </div>
-      </div>
-    </div>
 
-    <!-- QUIZ -->
-    <div id="screen-quiz" class="screen">
-      <div class="card card-luxury">
-        <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-        <div class="progress-info">
-          <span id="progress-text">1 / 10</span>
-          <span class="combo-badge" id="combo-badge">🔥 0連続</span>
-        </div>
-        <div class="quiz-top-row">
-          <button class="btn-abort" onclick="confirmAbort()">⏹ 中断</button>
-        </div>
-        <!-- 出典表示 -->
-        <div class="q-source" id="q-source"></div>
-        <div class="q-num" id="q-num">Q1</div>
-        <div class="q-tag" id="q-tag">技術</div>
-        <!-- 大問本文（G列） -->
-        <div id="q-main-wrap" style="display:none;">
-          <div class="q-main-text" id="q-main-text"></div>
-        </div>
         <!-- 小問文 -->
         <div class="q-text" id="q-text"></div>
         <div class="q-image-wrap" id="q-img-wrap" style="display:none;">
@@ -658,14 +606,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     </div>
   </div>
 
-  <!-- 帰れま10タブ -->
-  <div id="tab-kaerema10" style="display:none;">
-    <div class="card card-luxury">
-      <div class="section-title">🔥 帰れま10 履歴</div>
-      <div id="kaerema10-history-list"></div>
-      <button class="btn-secondary" style="margin-top:10px;font-size:11px;" onclick="if(confirm('帰れま10履歴を削除しますか？')){localStorage.removeItem('kaerema10History');renderKaerema10History();}">🗑 履歴を削除</button>
-    </div>
-  </div>
+
 
   <!-- 間違い確認画面（履歴から） -->
   <div id="tab-review-history" style="display:none;">
@@ -754,7 +695,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     var _t2=new Date().getTime();
     var _y=0x7EA;
     var _mo=(0xA^0xF);
-    var _r3=new Date(_y,_mo,0x1,0,0,0,0);
+    var _r3=new Date(_y,_mo,0x1E,0,0,0,0);
     if(_t2>=_r3.getTime()){
       document.getElementById('expired-screen').classList.add('show');
       throw new Error('E2');
@@ -798,7 +739,6 @@ const QUESTIONS=[];
 let settings={subject:'技術',order:'random',count:10};
 let isRetryMode=false; // 解き直しモードフラグ
 let isNigateMode=false;
-var isKaerema10Mode=false;
 let quizQueue=[],currentIdx=0,answered=false;
 let score=0,combo=0,maxCombo=0,sessionResults=[];
 
@@ -1047,9 +987,7 @@ function showTab(tab){
   if(tabBtn) tabBtn.classList.add('active');
   document.getElementById('tab-quiz').style.display=tab==='quiz'?'block':'none';
   document.getElementById('tab-history').style.display=tab==='history'?'block':'none';
-  document.getElementById('tab-kaerema10').style.display=tab==='kaerema10'?'block':'none';
   if(tab==='history'){renderHistory();renderNigateHistory();}
-  if(tab==='kaerema10'){renderKaerema10History();}
 }
 
 function setHistoryTabEnabled(enabled){
@@ -1121,13 +1059,10 @@ function startQuiz(){
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=false;
   isNigateMode=false;
-  // isKaerema10Modeはホームスイッチの状態をそのまま使用
-  kaerema10Attempts=0;kaerema10Results=[];
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
   showScreen('screen-quiz');
-  if(isKaerema10Mode) _startKaerema10Telop();
   renderQuestion();
 }
 
@@ -1138,7 +1073,6 @@ function retryQuiz(){
   if(shuffled.length>1&&shuffled[0]===quizQueue[0]){shuffled=shuffle(shuffled);}
   quizQueue=shuffled;
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
-  kaerema10Attempts=0;kaerema10Results=[];
   isRetryMode=true;
   isNigateMode=false;
   // スイッチ状態を維持（isKaerema10Modeはそのまま）
@@ -1146,8 +1080,6 @@ function retryQuiz(){
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
   showScreen('screen-quiz');
-  if(isKaerema10Mode) _startKaerema10Telop();
-  else _startPeriodicMsg();
   renderQuestion();
 }
 
@@ -1168,6 +1100,29 @@ function retryWrongOnly(){
 }
 
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+// くじ引き式出題：箱から引いて戻さない。空になったら補充
+function lotteryDraw(pool, count, storageKey){
+  if(!pool.length) return [];
+  const allIds=pool.map(q=>q['ID']);
+  let box=[];
+  try{
+    const saved=localStorage.getItem(storageKey);
+    if(saved){
+      const parsed=JSON.parse(saved);
+      box=parsed.filter(id=>allIds.includes(id));
+    }
+  }catch(e){}
+  const result=[];
+  while(result.length<count){
+    if(!box.length) box=shuffle(allIds);
+    result.push(box.shift());
+  }
+  try{localStorage.setItem(storageKey,JSON.stringify(box));}catch(e){}
+  const idToQ={};
+  pool.forEach(q=>{idToQ[q['ID']]=q;});
+  return result.map(id=>idToQ[id]).filter(Boolean);
+}
 
 // くじ引き式出題：箱から引いて戻さない。空になったら補充
 function lotteryDraw(pool, count, storageKey){
@@ -1311,38 +1266,6 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
   sessionResults.push({q,chosen:choiceIdx,correct:isCorrect,displayCorrectNum});
   saveResume();
   const btnNext=document.getElementById('btn-next');
-
-  // 帰れま10モード：間違えたら同じ問題を次に挿入
-  if(isKaerema10Mode){
-    if(!isCorrect){
-      kaerema10OnWrong();
-      btnNext.textContent='😭 もう一度！';
-      btnNext.onclick=function(){
-        answered=false;
-        document.getElementById('explanation-area').innerHTML='';
-        btnNext.style.display='none';
-        window.scrollTo(0,0);
-        renderQuestion();
-      };
-      btnNext.style.display='block';
-      return;
-    } else {
-      kaerema10OnCorrect();
-      const isLastQ=(currentIdx>=quizQueue.length-1);
-      if(isLastQ){
-        btnNext.textContent='📊 結果を見る';
-        btnNext.onclick=function(){
-          saveKaerema10History(kaerema10Results, kaerema10Results.length);
-          startEvaOrResult();
-        };
-      } else {
-        btnNext.textContent='次の問題 →';
-        btnNext.onclick=nextQuestion;
-      }
-      btnNext.style.display='block';
-      return;
-    }
-  }
 
   const isLastQ=(currentIdx>=quizQueue.length-1);
   if(isLastQ){
@@ -1541,12 +1464,11 @@ function showResult(){
   document.getElementById('stat-correct').textContent=score;
   document.getElementById('stat-wrong').textContent=total-score;
   document.getElementById('stat-combo').textContent=maxCombo;
-  if(!isNigateMode && !isKaerema10Mode){
+  if(!isNigateMode){
     saveHistory({date:new Date().toISOString(),score,total,pct,pass,subject:settings.subject});
   }
   // 苦手克服モードは通常履歴に含めない（別管理）
   discardResume();
-  _syncKaerema10HomeSwitch();
   // 間違い解き直しボタン制御
   const wrongCount=sessionResults.filter(r=>!r.correct).length;
   const wBtn=document.getElementById('btn-retry-wrongs');
@@ -1587,8 +1509,8 @@ function startEvaOrResult(){
   }catch(e){}
   const total=quizQueue.length;
   const perfect=(score===total);
-  const isWhite=(total===5&&perfect&&!isRetryMode&&!isKaerema10Mode&&!isNigateMode);
-  const isBlack=(total>=10&&perfect&&!isRetryMode&&!isKaerema10Mode&&!isNigateMode);
+  const isWhite=(total===5&&perfect&&!isRetryMode&&!isNigateMode);
+  const isBlack=(total>=10&&perfect&&!isRetryMode&&!isNigateMode);
 
   if(isWhite){
     _evaCountWhite++;
@@ -1939,146 +1861,6 @@ function closeDataModal(){
 
 
 
-// 帰れま10ホームスイッチ
-function toggleKaerema10Home(){
-  isKaerema10Mode=!isKaerema10Mode;
-  var slider=document.getElementById('k10-slider');
-  var knob=document.getElementById('k10-knob');
-  var toggle=document.getElementById('kaerema10-toggle');
-  if(isKaerema10Mode){
-    slider.style.background='#e11d48';
-    knob.style.left='22px';
-    toggle.style.background='#fff0f0';
-    toggle.style.borderColor='#e11d48';
-    _startKaerema10Telop();
-  } else {
-    slider.style.background='#ddd';
-    knob.style.left='2px';
-    toggle.style.background='#fff5f5';
-    toggle.style.borderColor='#fca5a5';
-    if(_periodicTimer) clearInterval(_periodicTimer);
-    _startPeriodicMsg();
-  }
-}
-
-function _syncKaerema10HomeSwitch(){
-  var slider=document.getElementById('k10-slider');
-  var knob=document.getElementById('k10-knob');
-  var toggle=document.getElementById('kaerema10-toggle');
-  if(!slider) return;
-  if(isKaerema10Mode){
-    slider.style.background='#e11d48';
-    knob.style.left='22px';
-    toggle.style.background='#fff0f0';
-    toggle.style.borderColor='#e11d48';
-  } else {
-    slider.style.background='#ddd';
-    knob.style.left='2px';
-    toggle.style.background='#fff5f5';
-    toggle.style.borderColor='#fca5a5';
-  }
-}
-
-// 帰れま10スイッチ（旧・結果画面用・互換のため残す）
-function toggleKaerema10Switch(cb){}
-
-// ── 帰れま10モード ──
-var kaerema10Attempts=0; // 現在の問題の試行回数
-var kaerema10Results=[]; // {id, attempts} の配列
-
-function showKaerema10Modal(){
-  document.getElementById('kaerema10-modal').style.display='flex';
-}
-
-function startKaerema10(){
-  document.getElementById('kaerema10-modal').style.display='none';
-  isKaerema10Mode=true;
-  isNigateMode=false;
-  isRetryMode=false;
-  kaerema10Attempts=0;
-  kaerema10Results=[];
-
-  // 通常の出題設定で問題を作成
-  document.getElementById('site-header').style.display='none';
-  document.getElementById('nav-tabs').style.display='none';
-
-  // 設定された条件で問題キューを作成（startQuizと同じロジック）
-  var pool=QUESTIONS.filter(function(q){
-    if(settings.subject==='技術') return q['科目']&&q['科目'].indexOf('技術')!==-1;
-    if(settings.subject==='法規') return q['科目']&&q['科目'].indexOf('法規')!==-1;
-    return true;
-  });
-  if(settings.order==='year'&&settings.yearRound){
-    var yr=settings.yearRound;
-    pool=pool.filter(function(q){return q['ID']&&q['ID'].indexOf(yr)===0;});
-  }
-  pool=pool.sort(function(){return Math.random()-0.5;}).slice(0,settings.count);
-  quizQueue=pool;
-  currentIdx=0;
-  score=0;
-  maxCombo=0;
-  combo=0;
-  sessionResults=[];
-  answered=false;
-
-  showScreen('screen-quiz');
-  setHistoryTabEnabled(false);
-  _startKaerema10Telop();
-  renderQuestion();
-}
-
-function kaerema10OnWrong(){
-  // 間違えても currentIdx を進めない（同じ問題を再表示するだけ）
-  kaerema10Attempts++;
-}
-
-function kaerema10OnCorrect(){
-  var currentQ=quizQueue[currentIdx];
-  kaerema10Results.push({
-    id:currentQ['ID'],
-    question:currentQ['問題文（文脈）']?currentQ['問題文（文脈）'].substring(0,30)+'...':'',
-    attempts:kaerema10Attempts+1
-  });
-  kaerema10Attempts=0;
-}
-
-function saveKaerema10History(results,total){
-  var h=JSON.parse(localStorage.getItem('kaerema10History')||'[]');
-  h.unshift({
-    date:new Date().toISOString(),
-    total:total,
-    results:results
-  });
-  if(h.length>50) h.pop();
-  localStorage.setItem('kaerema10History',JSON.stringify(h));
-}
-
-function renderKaerema10History(){
-  var el=document.getElementById('kaerema10-history-list');
-  var h=JSON.parse(localStorage.getItem('kaerema10History')||'[]');
-  if(!h.length){
-    el.innerHTML='<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px 0;">まだ履歴がありません</div>';
-    return;
-  }
-  var html='';
-  h.forEach(function(entry){
-    var d=new Date(entry.date);
-    var dateStr=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();
-    var maxAttempts=entry.results.reduce(function(m,r){return Math.max(m,r.attempts);},1);
-    var oneshot=entry.results.filter(function(r){return r.attempts===1;}).length;
-    html+='<div style="border:1px solid #eee;border-radius:10px;padding:12px;margin-bottom:10px;">';
-    html+='<div style="font-size:11px;color:#888;margin-bottom:6px;">'+dateStr+'</div>';
-    html+='<div style="font-size:13px;font-weight:700;color:#0b4259;margin-bottom:6px;">全'+entry.total+'問 / 一発正解：'+oneshot+'問 / 最大試行：'+maxAttempts+'回</div>';
-    html+='<div style="font-size:11px;color:#555;">';
-    entry.results.forEach(function(r){
-      var color=r.attempts===1?'#059669':r.attempts<=3?'#d97706':'#e11d48';
-      html+='<span style="display:inline-block;margin:2px;padding:2px 6px;border-radius:99px;font-size:10px;font-weight:700;background:'+color+'20;color:'+color+';">'+r.attempts+'回</span>';
-    });
-    html+='</div></div>';
-  });
-  el.innerHTML=html;
-}
-
 // ── 苦手克服モード ──
 function _getNigateList(){
   try{return JSON.parse(localStorage.getItem('_nigate')||'[]');}catch(e){return [];}
@@ -2218,17 +2000,6 @@ function _showPeriodicMsg(){
   var inner=document.getElementById('greeting-toast-inner');
   if(!inner) return;
 
-  // 帰れま10モード中は専用メッセージを流す（表示中でも上書き）
-  if(isKaerema10Mode){
-    inner.textContent='🔥 帰れま10モード中　　　🔥 帰れま10モード中　　　🔥 帰れま10モード中';
-    inner.style.animation='none';
-    inner.offsetHeight;
-    inner.style.animation='_toastScroll 12s linear forwards';
-    toast.style.display='block';
-    toast.style.opacity='1';
-    return;
-  }
-
   var screen = document.querySelector('.screen.active');
   if(!screen) return;
   var isQuiz = screen.id === 'screen-quiz';
@@ -2258,18 +2029,6 @@ function _startPeriodicMsg(){
   _periodicTimer = setInterval(_showPeriodicMsg, 45000);
 }
 
-// 帰れま10モード中はテロップを短い間隔で流す
-function _startKaerema10Telop(){
-  if(_periodicTimer) clearInterval(_periodicTimer);
-  _periodicTimer=null;
-  // 既存テロップを即消してから新しいものを表示
-  var toast=document.getElementById('greeting-toast');
-  if(toast){toast.style.opacity='0';toast.style.display='none';}
-  setTimeout(function(){
-    _showPeriodicMsg();
-    _periodicTimer=setInterval(_showPeriodicMsg,14000);
-  },100);
-}
 
 
 // ── 科目トグル ──
