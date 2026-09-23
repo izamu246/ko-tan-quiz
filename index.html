@@ -1586,14 +1586,10 @@ function showResult(){
     isHissuPhase=false;
     hissuWrongs=[];
   }
-  // 解き直し必須スイッチ表示制御
-  var hissuWrap=document.getElementById('hissu-toggle-wrap');
-  if(hissuWrap){
-    var wrongCount=sessionResults.filter(function(r){return !r.correct;}).length;
-    hissuWrap.style.display=wrongCount>0&&!isHissuPhase?'block':'none';
-  }
-  // 間違い解き直しボタン制御
+  // 間違い解き直しボタン制御 & 解き直し必須スイッチ表示制御
   const wrongCount=sessionResults.filter(r=>!r.correct).length;
+  var hissuWrap=document.getElementById('hissu-toggle-wrap');
+  if(hissuWrap){hissuWrap.style.display=wrongCount>0&&!isHissuPhase?'block':'none';}
   const wBtn=document.getElementById('btn-retry-wrongs');
   if(wBtn){
     if(wrongCount>0){wBtn.style.display='block';wBtn.textContent='❌ 間違えた '+wrongCount+' 問だけ解き直す';}
