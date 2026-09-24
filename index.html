@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260902';
+const _APP_VER='20260903';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -318,9 +318,6 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 .exp-trap-box{background:linear-gradient(135deg,#fff5f5,#fdecea);border:1.5px solid rgba(220,38,38,0.35);border-radius:10px;padding:14px;font-size:clamp(12px,2.8vw,13px);line-height:1.85;margin-top:12px;}
 .exp-trap-label{font-size:10px;font-weight:700;letter-spacing:1.5px;margin-bottom:6px;color:#b91c1c;text-transform:uppercase;}
 
-/* 期限切れ画面 */
-#expired-screen{display:none;position:fixed;inset:0;background:#f8f4ee;z-index:9999;align-items:center;justify-content:center;flex-direction:column;padding:24px;}
-#expired-screen.show{display:flex;}
 .expired-inner{max-width:360px;width:100%;text-align:center;}
 .expired-icon{font-size:52px;margin-bottom:16px;}
 .expired-title{font-family:'Noto Serif JP',serif;font-size:20px;font-weight:700;color:#0b4259;margin-bottom:12px;letter-spacing:1px;}
@@ -345,27 +342,6 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
   <div class="error-msg" id="error-msg"></div>
 </div>
 
-<div id="expired-screen" onclick="handleLockTap()">
-<!-- パスワード解除モーダル -->
-<div id="lock-pw-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;align-items:center;justify-content:center;">
-  <div style="background:white;border-radius:16px;padding:28px 24px;max-width:300px;width:90%;text-align:center;">
-    <div style="font-size:14px;font-weight:700;color:#0b4259;margin-bottom:16px;">解除コードを入力</div>
-    <input id="lock-pw-input" type="text" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:16px;text-align:center;box-sizing:border-box;" placeholder="コード">
-    <button onclick="checkLockPw()" style="width:100%;margin-top:12px;padding:12px;background:#0b4259;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">解除</button>
-    <button onclick="document.getElementById('lock-pw-modal').style.display='none';lockTapCount=0;" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid #ddd;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">キャンセル</button>
-  </div>
-</div>
-  <div class="expired-inner">
-    <div class="expired-icon">📅</div>
-    <div class="expired-title">ご利用期間が終了しました</div>
-    <div class="expired-msg">
-      本バージョンの利用期限が終了しました。<br><br>
-      継続してご利用をご希望の場合は、<br>
-      <strong>猪山</strong>までお問い合わせください。<br><br>
-      <span style="font-size:12px;color:#999;">本アプリをご利用いただき、ありがとうございました。</span>
-    </div>
-  </div>
-</div>
 
 <!-- 新機能お知らせモーダル -->
 <div id="whatsnew-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9100;align-items:center;justify-content:center;">
@@ -474,7 +450,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 <header id="site-header">
   <div class="header-inner">
     <div style="width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start;padding-top:2px;gap:3px;">
-<span onclick="document.getElementById('feedback-modal').style.display='flex'" style="font-size:10px;color:rgba(255,255,255,0.7);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;margin-bottom:1px;">💬 意見</span>
+      <span onclick="document.getElementById('feedback-modal').style.display='flex'" style="font-size:10px;color:rgba(255,255,255,0.7);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;margin-bottom:1px;">💬 意見</span>
       <span style="font-family:monospace;font-size:8px;color:rgba(255,200,80,0.55);letter-spacing:0.5px;border:1px solid rgba(255,200,80,0.25);border-radius:3px;padding:1px 5px;white-space:nowrap;">β TEST</span>
       <span id="hdr-nickname" onclick="_openNicknameEdit()" style="font-family:'Noto Sans JP',sans-serif;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.5px;white-space:nowrap;overflow:hidden;max-width:55px;text-overflow:ellipsis;cursor:pointer;display:block;margin-top:1px;margin-bottom:10px;"></span>
     </div>
@@ -557,10 +533,10 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           <button class="btn-toggle" id="btn-50" data-val="50" onclick="selectBtn(this,'count-btns')" style="display:none;">50問</button>
         </div>
         <div class="divider"></div>
+        </div><!-- /setup-area -->
         <button class="btn-start" id="btn-start-quiz" onclick="startQuiz()" disabled style="opacity:0.5;cursor:not-allowed;">⏳ データ取得中...</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
-        <!-- 解き直し必須モード トグル -->
-        <div onclick="toggleHissuHome()" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:12px;padding:12px 16px;cursor:pointer;transition:all 0.3s;" id="hissu-home-toggle">
+        <div onclick="toggleHissuHome()" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:12px;padding:12px 16px;cursor:pointer;" id="hissu-home-toggle">
           <div>
             <div style="font-size:13px;font-weight:700;color:#0b4259;">✅ 解き直し必須モード</div>
             <div style="font-size:10px;color:#888;margin-top:2px;">全問後に間違いを正解するまで再出題</div>
@@ -570,17 +546,32 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
             <span id="hissu-home-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
           </label>
         </div>
-        </div><!-- /setup-area -->
 
-        <!-- 小問文 -->
-        <div class="q-text" id="q-text"></div>
+        <!-- クイズ進行エリア（スタート前は非表示） -->
+        <div id="quiz-area" style="display:none;">
+          <div style="margin-bottom:10px;">
+            <div class="progress-bar-wrap" style="height:4px;background:#e0e0e0;border-radius:99px;margin-bottom:6px;">
+              <div id="progress-fill" style="height:100%;background:linear-gradient(90deg,#0ea5c8,#b8922a);border-radius:99px;width:0%;transition:width 0.4s;"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span id="progress-text" style="font-size:11px;color:#888;">1 / 10</span>
+              <span id="combo-badge" style="display:none;font-size:10px;font-weight:700;color:#e11d48;background:#fff0f0;padding:2px 8px;border-radius:99px;"></span>
+            </div>
+          </div>
+          <div id="q-source" class="q-source"></div>
+          <div id="q-num" class="q-num"></div>
+          <div id="q-tag" class="q-tag"></div>
+          <div id="q-main-wrap" style="display:none;"></div>
+          <!-- 小問文 -->
+          <div class="q-text" id="q-text"></div>
         <div class="q-image-wrap" id="q-img-wrap" style="display:none;">
           <img id="q-img" src="" alt="問題図" onclick="openLightbox(this.src)">
           <div class="img-hint">👆 タップで拡大</div>
         </div>
-        <div class="choices-grid" id="choices-grid"></div>
-        <div id="explanation-area"></div>
-        <button class="btn-next" id="btn-next" style="display:none;" onclick="nextQuestion()">次の問題 →</button>
+          <div class="choices-grid" id="choices-grid"></div>
+          <div id="explanation-area"></div>
+          <button class="btn-next" id="btn-next" style="display:none;" onclick="nextQuestion()">次の問題 →</button>
+        </div><!-- /quiz-area -->
       </div>
     </div>
 
@@ -603,20 +594,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         <div class="result-btns">
           <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度</button>
           <button class="btn-retry" id="btn-retry-wrongs" onclick="retryWrongOnly()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">❌ 間違えた<span id="wrongs-count"></span>問だけ解き直す</button>
-          <!-- 解き直し必須スイッチ -->
-          <div id="hissu-toggle-wrap" style="display:none;margin-top:4px;">
-            <div onclick="toggleHissuSwitch()" style="display:flex;align-items:center;justify-content:space-between;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:12px;padding:10px 16px;cursor:pointer;transition:all 0.3s;" id="hissu-toggle">
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#0b4259;">✅ 解き直し必須モード</div>
-                <div style="font-size:10px;color:#888;margin-top:2px;">正解するまで繰り返し再出題</div>
-              </div>
-              <label style="position:relative;display:inline-block;width:44px;height:24px;pointer-events:none;">
-                <span id="hissu-slider" style="position:absolute;inset:0;background:#ddd;border-radius:99px;transition:0.3s;"></span>
-                <span id="hissu-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
-              </label>
-            </div>
-          </div>
-          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';var sa=document.getElementById('setup-area');if(sa)sa.style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
+          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
     </div>
@@ -729,10 +707,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     var _mo=(0xA^0xF);
     var _r3=new Date(_y,_mo,0x1E,0,0,0,0);
     if(_t2>=_r3.getTime()){
-      // 開発者解除済みチェック
-      try{if(localStorage.getItem('_devUnlock')==='1')return;}catch(e){}
-      document.getElementById('expired-screen').classList.add('show');
-      throw new Error('E2');
+      // ロック無効
     }
   }
   _b6();
@@ -830,12 +805,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 function enableStartBtn(){
   var btn=document.getElementById('btn-start-quiz');
-  if(btn){
-    btn.disabled=false;
-    btn.style.opacity='1';
-    btn.style.cursor='pointer';
-    btn.textContent='▶ スタート';
-  }
+  if(btn){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';btn.textContent='▶ スタート';}
 }
 function setStatusBar(show, msg, pct, done, error){
   const bar=document.getElementById('data-status-bar');
@@ -859,30 +829,14 @@ function setStatusBar(show, msg, pct, done, error){
 }
 
 // 起動時強制リセット＆再取得
-
-// データ強制更新
-function forceRefreshData(){
-  try{
-    localStorage.removeItem('quizData');
-    localStorage.removeItem('_qdc');
-    localStorage.removeItem('_qfn');
-    localStorage.removeItem('_qver');
-    const keys=Object.keys(localStorage).filter(k=>k.startsWith('quizImgCache_'));
-    keys.forEach(k=>localStorage.removeItem(k));
-  }catch(e){}
-  QUESTIONS.length=0;
-  autoRefreshData();
-}
-
 function autoRefreshData(){
-  // 毎回起動時にExcelを強制取得（オフライン時はキャッシュ使用）
+  // 3日以内のキャッシュがあればオフライン・オンライン問わずキャッシュ優先
   const _now=new Date().getTime();
   let _saved=null;
   try{_saved=localStorage.getItem('_qdc');}catch(e){}
   const _age=_saved?(_now-parseInt(_saved)):Infinity;
   const _hasCacheData=(()=>{try{return !!localStorage.getItem('quizData');}catch(e){return false;}})();
 
-  // オフライン時はキャッシュを使用
   if(_hasCacheData && !navigator.onLine){
     // オフライン時のみキャッシュ優先
     const ok=restoreDataFromStorage();
@@ -929,7 +883,7 @@ function autoRefreshData(){
       const latestName=xlsx[0].name;
       const cachedName=localStorage.getItem('_qfn')||'';
       const cachedVer=localStorage.getItem('_qver')||'';
-      // 常に最新Excelを取得（キャッシュスキップ）
+      // 常に最新Excelを取得
       // 新しいExcelがある or キャッシュ切れ→クリアして取得
       setStatusBar(true,'新しいデータを取得中...',20);
       _sendAccessLog('new',latestName);
@@ -1014,7 +968,7 @@ function updateCount50(){
   const isBoth=sub&&sub.dataset.val==='両方';
   // 両方：5,15,25を非表示・30,40,50を表示
   // 単科目：5,15,25を表示・30,40,50を非表示
-  // 5問ボタンは廃止
+  document.querySelector('[data-val="5"]').style.display=isBoth?'none':'';
   document.querySelector('[data-val="15"]').style.display=isBoth?'none':'';
   document.querySelector('[data-val="25"]').style.display=isBoth?'none':'';
   document.getElementById('btn-30').style.display=isBoth?'inline-block':'none';
@@ -1112,8 +1066,7 @@ function startQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  var sa=document.getElementById('setup-area');if(sa)sa.style.display='none';
-  showScreen('screen-setup');
+  showScreen('screen-quiz');
   renderQuestion();
 }
 
@@ -1126,31 +1079,11 @@ function retryQuiz(){
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=true;
   isNigateMode=false;
+  // スイッチ状態を維持（isKaerema10Modeはそのまま）
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
-  showScreen('screen-setup');
-  renderQuestion();
-}
-
-
-function startHissuPhase(){
-  if(!hissuWrongs.length) return;
-  isHissuPhase=true;
-  discardResume();
-  quizQueue=shuffle(hissuWrongs.slice());
-  hissuWrongs=[];
-  currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
-  isRetryMode=true;
-  isNigateMode=false;
-  setHistoryTabEnabled(false);
-  document.getElementById('site-header').style.display='none';
-  document.getElementById('nav-tabs').style.display='none';
-  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
-  // 解き直しフェーズ表示
-  showToast('🔄 解き直しフェーズ開始！間違えた問題を正解するまで繰り返します');
-  showScreen('screen-setup');
+  showScreen('screen-quiz');
   renderQuestion();
 }
 
@@ -1162,83 +1095,50 @@ function retryWrongOnly(){
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=true;
   isNigateMode=false;
+  isKaerema10Mode=false;
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
-  showScreen('screen-setup');
+  showScreen('screen-quiz');
   renderQuestion();
 }
 
 
 // ===== 解き直し必須モード =====
 var isHissuMode=false;
-var hissuWrongs=[]; // 解き直し必須フェーズの問題リスト
-var isHissuPhase=false; // 解き直しフェーズ中フラグ
+var hissuWrongs=[];
+var isHissuPhase=false;
 
 function toggleHissuHome(){
   isHissuMode=!isHissuMode;
-  _syncHissuSwitch();
-}
-function toggleHissuSwitch(){
-  isHissuMode=!isHissuMode;
-  _syncHissuSwitch();
-}
-function _syncHissuSwitch(){
   var slider=document.getElementById('hissu-home-slider');
   var knob=document.getElementById('hissu-home-knob');
   var toggle=document.getElementById('hissu-home-toggle');
-  var slider2=document.getElementById('hissu-slider');
-  var knob2=document.getElementById('hissu-knob');
-  var toggle2=document.getElementById('hissu-toggle');
   if(isHissuMode){
     if(slider){slider.style.background='#0ea5c8';knob.style.left='22px';}
     if(toggle){toggle.style.background='#e0f7ff';toggle.style.borderColor='#0ea5c8';}
-    if(slider2){slider2.style.background='#0ea5c8';knob2.style.left='22px';}
-    if(toggle2){toggle2.style.background='#e0f7ff';toggle2.style.borderColor='#0ea5c8';}
   }else{
     if(slider){slider.style.background='#ddd';knob.style.left='2px';}
     if(toggle){toggle.style.background='#f0f9ff';toggle.style.borderColor='#7dd3fc';}
-    if(slider2){slider2.style.background='#ddd';knob2.style.left='2px';}
-    if(toggle2){toggle2.style.background='#f0f9ff';toggle2.style.borderColor='#7dd3fc';}
   }
 }
 
-// ===== ロック解除 =====
-var lockTapCount=0;
-var lockTapTimer=null;
-function handleLockTap(){
-  // モーダルが開いている場合は無視
-  if(document.getElementById('lock-pw-modal').style.display==='flex') return;
-  lockTapCount++;
-  if(lockTapTimer) clearTimeout(lockTapTimer);
-  lockTapTimer=setTimeout(function(){lockTapCount=0;},2000);
-  if(lockTapCount>=5){
-    lockTapCount=0;
-    document.getElementById('lock-pw-input').value='';
-    document.getElementById('lock-pw-modal').style.display='flex';
-  }
-}
-async function checkLockPw(){
-  var input=document.getElementById('lock-pw-input').value;
-  // SHA-256でハッシュ化して比較
-  var enc=new TextEncoder().encode(input);
-  var buf=await crypto.subtle.digest('SHA-256',enc);
-  var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-  // ハッシュを分割して難読化
-  var _p1='3bcc163b6e95df91';
-  var _p2='2ee6dc698651cb5d';
-  var _p3='05bd3452ef53076c';
-  var _p4='0babb3189d9c6915';
-  if(hex===_p1+_p2+_p3+_p4){
-    localStorage.setItem('_devUnlock','1');
-    document.getElementById('lock-pw-modal').style.display='none';
-    // リロードして正常起動
-    location.reload();
-  }else{
-    document.getElementById('lock-pw-input').value='';
-    document.getElementById('lock-pw-input').placeholder='コードが違います';
-  }
+function startHissuPhase(){
+  if(!hissuWrongs.length) return;
+  isHissuPhase=true;
+  discardResume();
+  quizQueue=shuffle(hissuWrongs.slice());
+  hissuWrongs=[];
+  currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
+  isRetryMode=true;isNigateMode=false;
+  setHistoryTabEnabled(false);
+  document.getElementById('site-header').style.display='none';
+  document.getElementById('nav-tabs').style.display='none';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  showToast('🔄 解き直しフェーズ開始！正解するまで繰り返します');
+  showScreen('screen-setup');
+  renderQuestion();
 }
 
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
@@ -1267,6 +1167,40 @@ function lotteryDraw(pool, count, storageKey){
 }
 
 // くじ引き式出題：箱から引いて戻さない。空になったら補充
+function lotteryDraw(pool, count, storageKey){
+  if(!pool.length) return [];
+  const allIds=pool.map(q=>q['ID']);
+
+  // 箱を読み込み
+  let box=[];
+  try{
+    const saved=localStorage.getItem(storageKey);
+    if(saved){
+      const parsed=JSON.parse(saved);
+      // 有効なIDのみ残す（問題データが変わった場合の対策）
+      box=parsed.filter(id=>allIds.includes(id));
+    }
+  }catch(e){}
+
+  const result=[];
+  while(result.length<count){
+    // 箱が空になったら全問補充してシャッフル
+    if(!box.length){
+      box=shuffle(allIds);
+    }
+    // 箱の先頭から引く
+    result.push(box.shift());
+    if(result.length>=count) break;
+  }
+
+  // 箱の状態を保存
+  try{ localStorage.setItem(storageKey, JSON.stringify(box)); }catch(e){}
+
+  // IDから問題オブジェクトに変換
+  const idToQ={};
+  pool.forEach(q=>{idToQ[q['ID']]=q;});
+  return result.map(id=>idToQ[id]).filter(Boolean);
+}
 
 // ===== RENDER QUESTION =====
 function renderQuestion(){
@@ -1368,15 +1302,15 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
       a.style.fontWeight='600';
     });
   });
-  if(isCorrect){score++;combo++;if(combo>maxCombo)maxCombo=combo;if(!isHissuPhase)_removeNigate(q['ID']);}else{combo=0;if(!isHissuPhase){_addNigate(q['ID']);if(isHissuMode)hissuWrongs.push(q);}}
+  if(isCorrect){score++;combo++;if(combo>maxCombo)maxCombo=combo;if(!isHissuPhase)_removeNigate(q['ID']);}else{combo=0;if(!isHissuPhase){_addNigate(q['ID']);if(isHissuMode&&!isRetryMode)hissuWrongs.push(q);}}
   animateStamp(isCorrect);
   renderExplanation(q, displayCorrectNum);
   sessionResults.push({q,chosen:choiceIdx,correct:isCorrect,displayCorrectNum});
   saveResume();
   const btnNext=document.getElementById('btn-next');
 
-  // 解き直し必須フェーズ：不正解は同じ問題を再出題
-  if((isHissuPhase||isHissuMode&&isRetryMode)&&!isCorrect){
+  // 解き直し必須フェーズ：不正解は同じ問題を繰り返す
+  if(isHissuPhase&&!isCorrect){
     btnNext.textContent='😤 もう一度！';
     btnNext.onclick=function(){
       answered=false;
@@ -1388,10 +1322,8 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
     btnNext.style.display='block';
     return;
   }
-  // 解き直しフェーズ：正解したら苦手リストから削除（スコアには反映しない）
-  if((isHissuPhase||isHissuMode&&isRetryMode)&&isCorrect){
-    _removeNigate(q['ID']);
-  }
+  // 解き直しフェーズ：正解したら苦手リストから削除
+  if(isHissuPhase&&isCorrect){_removeNigate(q['ID']);}
   const isLastQ=(currentIdx>=quizQueue.length-1);
   if(isLastQ){
     btnNext.textContent='📊 結果を見る';
@@ -1445,7 +1377,8 @@ function confirmAbort(){
     setHistoryTabEnabled(true);
     document.getElementById('site-header').style.display='';
     document.getElementById('nav-tabs').style.display='';
-    var sa=document.getElementById('setup-area');if(sa)sa.style.display='';
+    var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
+    var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
     showScreen('screen-setup');
     checkResumeBanner();
   }
@@ -1486,8 +1419,7 @@ function resumeQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
-  showScreen('screen-setup');
+  showScreen('screen-quiz');
   renderQuestion();
 }
 
@@ -1596,24 +1528,13 @@ function showResult(){
   }
   // 苦手克服モードは通常履歴に含めない（別管理）
   discardResume();
-  // 解き直し必須モード：通常フェーズ終了後に自動で解き直しフェーズへ
-  if(isHissuMode && !isHissuPhase && !isRetryMode && !isNigateMode){
-    if(hissuWrongs.length>0){
-      setTimeout(function(){
-        startHissuPhase();
-      },1500);
-      // 一時的に結果を見せる
-    }
+  // 解き直し必須モード：通常フェーズ後に自動で解き直しフェーズへ
+  if(isHissuMode&&!isHissuPhase&&!isRetryMode&&!isNigateMode&&hissuWrongs.length>0){
+    setTimeout(function(){startHissuPhase();},1500);
   }
-  // 解き直しフェーズ終了時の処理
-  if(isHissuPhase){
-    isHissuPhase=false;
-    hissuWrongs=[];
-  }
-  // 間違い解き直しボタン制御 & 解き直し必須スイッチ表示制御
+  if(isHissuPhase){isHissuPhase=false;hissuWrongs=[];}
+  // 間違い解き直しボタン制御
   const wrongCount=sessionResults.filter(r=>!r.correct).length;
-  var hissuWrap=document.getElementById('hissu-toggle-wrap');
-  if(hissuWrap){hissuWrap.style.display=wrongCount>0&&!isHissuPhase?'block':'none';}
   const wBtn=document.getElementById('btn-retry-wrongs');
   if(wBtn){
     if(wrongCount>0){wBtn.style.display='block';wBtn.textContent='❌ 間違えた '+wrongCount+' 問だけ解き直す';}
@@ -2053,8 +1974,7 @@ function _startNigateQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
-  showScreen('screen-setup');
+  showScreen('screen-quiz');
   renderQuestion();
 }
 
