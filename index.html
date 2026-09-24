@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20260901';
+const _APP_VER='20260902';
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -474,8 +474,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 <header id="site-header">
   <div class="header-inner">
     <div style="width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start;padding-top:2px;gap:3px;">
-      <span onclick="forceRefreshData()" style="font-size:9px;color:rgba(255,255,255,0.6);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.1);border-radius:4px;padding:1px 5px;margin-bottom:2px;">🔄 更新</span>
-      <span onclick="document.getElementById('feedback-modal').style.display='flex'" style="font-size:10px;color:rgba(255,255,255,0.7);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;margin-bottom:1px;">💬 意見</span>
+<span onclick="document.getElementById('feedback-modal').style.display='flex'" style="font-size:10px;color:rgba(255,255,255,0.7);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;margin-bottom:1px;">💬 意見</span>
       <span style="font-family:monospace;font-size:8px;color:rgba(255,200,80,0.55);letter-spacing:0.5px;border:1px solid rgba(255,200,80,0.25);border-radius:3px;padding:1px 5px;white-space:nowrap;">β TEST</span>
       <span id="hdr-nickname" onclick="_openNicknameEdit()" style="font-family:'Noto Sans JP',sans-serif;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.5px;white-space:nowrap;overflow:hidden;max-width:55px;text-overflow:ellipsis;cursor:pointer;display:block;margin-top:1px;margin-bottom:10px;"></span>
     </div>
@@ -532,6 +531,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         </div>
       </div>
       <div class="card card-luxury">
+        <div id="setup-area">
         <div class="section-title">📚 出題設定</div>
         <label class="setup-label">科目</label>
         <div class="btn-group" id="subject-btns">
@@ -570,6 +570,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
             <span id="hissu-home-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
           </label>
         </div>
+        </div><!-- /setup-area -->
 
         <!-- 小問文 -->
         <div class="q-text" id="q-text"></div>
@@ -615,7 +616,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
               </label>
             </div>
           </div>
-          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
+          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';var sa=document.getElementById('setup-area');if(sa)sa.style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
     </div>
@@ -864,13 +865,14 @@ function forceRefreshData(){
 }
 
 function autoRefreshData(){
-  // 3日以内のキャッシュがあればオフライン・オンライン問わずキャッシュ優先
+  // 毎回起動時にExcelを強制取得（オフライン時はキャッシュ使用）
   const _now=new Date().getTime();
   let _saved=null;
   try{_saved=localStorage.getItem('_qdc');}catch(e){}
   const _age=_saved?(_now-parseInt(_saved)):Infinity;
   const _hasCacheData=(()=>{try{return !!localStorage.getItem('quizData');}catch(e){return false;}})();
 
+  // オフライン時はキャッシュを使用
   if(_hasCacheData && !navigator.onLine){
     // オフライン時のみキャッシュ優先
     const ok=restoreDataFromStorage();
@@ -917,17 +919,7 @@ function autoRefreshData(){
       const latestName=xlsx[0].name;
       const cachedName=localStorage.getItem('_qfn')||'';
       const cachedVer=localStorage.getItem('_qver')||'';
-      // ファイル名が同じ＆バージョンが同じ＆3日以内→キャッシュ継続
-      if(latestName===cachedName&&cachedVer===_APP_VER&&_hasCacheData&&_age<3*24*60*60*1000){
-        const ok=restoreDataFromStorage();
-        if(ok){
-          buildYearButtons();
-          setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
-          setTimeout(()=>setStatusBar(false),2000);
-          _sendAccessLog('cache',latestName);
-          return;
-        }
-      }
+      // 常に最新Excelを取得（キャッシュスキップ）
       // 新しいExcelがある or キャッシュ切れ→クリアして取得
       setStatusBar(true,'新しいデータを取得中...',20);
       _sendAccessLog('new',latestName);
@@ -1110,6 +1102,7 @@ function startQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
+  var sa=document.getElementById('setup-area');if(sa)sa.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1126,6 +1119,7 @@ function retryQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1143,6 +1137,7 @@ function startHissuPhase(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   // 解き直しフェーズ表示
   showToast('🔄 解き直しフェーズ開始！間違えた問題を正解するまで繰り返します');
   showScreen('screen-setup');
@@ -1160,6 +1155,7 @@ function retryWrongOnly(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1439,6 +1435,7 @@ function confirmAbort(){
     setHistoryTabEnabled(true);
     document.getElementById('site-header').style.display='';
     document.getElementById('nav-tabs').style.display='';
+    var sa=document.getElementById('setup-area');if(sa)sa.style.display='';
     showScreen('screen-setup');
     checkResumeBanner();
   }
@@ -1479,6 +1476,7 @@ function resumeQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -2045,6 +2043,7 @@ function _startNigateQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
