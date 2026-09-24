@@ -557,7 +557,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           <button class="btn-toggle" id="btn-50" data-val="50" onclick="selectBtn(this,'count-btns')" style="display:none;">50問</button>
         </div>
         <div class="divider"></div>
-        <button class="btn-start" onclick="startQuiz()">▶ スタート</button>
+        <button class="btn-start" id="btn-start-quiz" onclick="startQuiz()" disabled style="opacity:0.5;cursor:not-allowed;">⏳ データ取得中...</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
         <!-- 解き直し必須モード トグル -->
         <div onclick="toggleHissuHome()" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:12px;padding:12px 16px;cursor:pointer;transition:all 0.3s;" id="hissu-home-toggle">
@@ -827,6 +827,16 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // ステータスバー制御
+
+function enableStartBtn(){
+  var btn=document.getElementById('btn-start-quiz');
+  if(btn){
+    btn.disabled=false;
+    btn.style.opacity='1';
+    btn.style.cursor='pointer';
+    btn.textContent='▶ スタート';
+  }
+}
 function setStatusBar(show, msg, pct, done, error){
   const bar=document.getElementById('data-status-bar');
   const icon=document.getElementById('data-status-icon');
@@ -878,7 +888,7 @@ function autoRefreshData(){
     const ok=restoreDataFromStorage();
     if(ok){
       buildYearButtons();
-      setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
+      setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);enableStartBtn();
       setTimeout(()=>{
         setStatusBar(false);
         // さりげなくオフライン表示
@@ -894,7 +904,7 @@ function autoRefreshData(){
     const ok=restoreDataFromStorage();
     if(ok){
       buildYearButtons();
-      setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
+      setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);enableStartBtn();
       setTimeout(()=>{
         setStatusBar(false);
         try{document.getElementById('offline-badge').style.display='inline';}catch(e){}
@@ -955,7 +965,7 @@ function autoRefreshData(){
       setStatusBar(true,QUESTIONS.length+'問を取得しました。画像をキャッシュ中...',85);
       cacheAllImages();
       setTimeout(()=>{
-        setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);
+        setStatusBar(true,'準備完了！（'+QUESTIONS.length+'問）',100,true,false);enableStartBtn();
         setTimeout(()=>setStatusBar(false),2500);
       },500);
     })
