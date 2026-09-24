@@ -556,6 +556,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           <button class="btn-toggle" id="btn-50" data-val="50" onclick="selectBtn(this,'count-btns')" style="display:none;">50問</button>
         </div>
         <div class="divider"></div>
+        <button class="btn-secondary" onclick="forceRefreshData()" style="margin-bottom:8px;font-size:12px;color:var(--primary-dark);border:1px solid var(--primary-dark);">🔄 データを更新</button>
         <button class="btn-start" onclick="startQuiz()">▶ スタート</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
         <!-- 解き直し必須モード トグル -->
@@ -847,6 +848,21 @@ function setStatusBar(show, msg, pct, done, error){
 }
 
 // 起動時強制リセット＆再取得
+
+// データ強制更新
+function forceRefreshData(){
+  try{
+    localStorage.removeItem('quizData');
+    localStorage.removeItem('_qdc');
+    localStorage.removeItem('_qfn');
+    localStorage.removeItem('_qver');
+    const keys=Object.keys(localStorage).filter(k=>k.startsWith('quizImgCache_'));
+    keys.forEach(k=>localStorage.removeItem(k));
+  }catch(e){}
+  QUESTIONS.length=0;
+  autoRefreshData();
+}
+
 function autoRefreshData(){
   // 3日以内のキャッシュがあればオフライン・オンライン問わずキャッシュ優先
   const _now=new Date().getTime();
