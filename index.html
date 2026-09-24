@@ -350,7 +350,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 <div id="lock-pw-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:16px;padding:28px 24px;max-width:300px;width:90%;text-align:center;">
     <div style="font-size:14px;font-weight:700;color:#0b4259;margin-bottom:16px;">解除コードを入力</div>
-    <input id="lock-pw-input" type="password" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:16px;text-align:center;box-sizing:border-box;" placeholder="コード">
+    <input id="lock-pw-input" type="text" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:16px;text-align:center;box-sizing:border-box;" placeholder="コード">
     <button onclick="checkLockPw()" style="width:100%;margin-top:12px;padding:12px;background:#0b4259;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">解除</button>
     <button onclick="document.getElementById('lock-pw-modal').style.display='none';lockTapCount=0;" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid #ddd;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">キャンセル</button>
   </div>
@@ -1211,8 +1211,8 @@ async function checkLockPw(){
   if(hex===_p1+_p2+_p3+_p4){
     localStorage.setItem('_devUnlock','1');
     document.getElementById('lock-pw-modal').style.display='none';
-    document.getElementById('expired-screen').classList.remove('show');
-    showToast('解除しました');
+    // リロードして正常起動
+    location.reload();
   }else{
     document.getElementById('lock-pw-input').value='';
     document.getElementById('lock-pw-input').placeholder='コードが違います';
