@@ -1060,7 +1060,9 @@ function startQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1077,7 +1079,9 @@ function retryQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1093,7 +1097,9 @@ function retryWrongOnly(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1413,7 +1419,9 @@ function resumeQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1968,7 +1976,9 @@ function _startNigateQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  showScreen('screen-setup');
   renderQuestion();
 }
 
