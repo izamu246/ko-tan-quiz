@@ -474,6 +474,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 <header id="site-header">
   <div class="header-inner">
     <div style="width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start;padding-top:2px;gap:3px;">
+      <span onclick="forceRefreshData()" style="font-size:9px;color:rgba(255,255,255,0.6);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.1);border-radius:4px;padding:1px 5px;margin-bottom:2px;">🔄 更新</span>
       <span onclick="document.getElementById('feedback-modal').style.display='flex'" style="font-size:10px;color:rgba(255,255,255,0.7);cursor:pointer;letter-spacing:0.3px;user-select:none;-webkit-user-select:none;background:rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;margin-bottom:1px;">💬 意見</span>
       <span style="font-family:monospace;font-size:8px;color:rgba(255,200,80,0.55);letter-spacing:0.5px;border:1px solid rgba(255,200,80,0.25);border-radius:3px;padding:1px 5px;white-space:nowrap;">β TEST</span>
       <span id="hdr-nickname" onclick="_openNicknameEdit()" style="font-family:'Noto Sans JP',sans-serif;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.5px;white-space:nowrap;overflow:hidden;max-width:55px;text-overflow:ellipsis;cursor:pointer;display:block;margin-top:1px;margin-bottom:10px;"></span>
@@ -556,7 +557,6 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           <button class="btn-toggle" id="btn-50" data-val="50" onclick="selectBtn(this,'count-btns')" style="display:none;">50問</button>
         </div>
         <div class="divider"></div>
-        <button class="btn-secondary" onclick="forceRefreshData()" style="margin-bottom:8px;font-size:12px;color:var(--primary-dark);border:1px solid var(--primary-dark);">🔄 データを更新</button>
         <button class="btn-start" onclick="startQuiz()">▶ スタート</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
         <!-- 解き直し必須モード トグル -->
@@ -1110,7 +1110,7 @@ function startQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1126,7 +1126,7 @@ function retryQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1145,7 +1145,7 @@ function startHissuPhase(){
   document.getElementById('nav-tabs').style.display='none';
   // 解き直しフェーズ表示
   showToast('🔄 解き直しフェーズ開始！間違えた問題を正解するまで繰り返します');
-  showScreen('screen-quiz');
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1160,7 +1160,7 @@ function retryWrongOnly(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -1479,7 +1479,7 @@ function resumeQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  showScreen('screen-setup');
   renderQuestion();
 }
 
@@ -2045,7 +2045,7 @@ function _startNigateQuiz(){
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
-  showScreen('screen-quiz');
+  showScreen('screen-setup');
   renderQuestion();
 }
 
