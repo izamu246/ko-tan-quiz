@@ -533,7 +533,6 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           <button class="btn-toggle" id="btn-50" data-val="50" onclick="selectBtn(this,'count-btns')" style="display:none;">50問</button>
         </div>
         <div class="divider"></div>
-        </div><!-- /setup-area -->
         <button class="btn-start" id="btn-start-quiz" onclick="startQuiz()">▶ スタート</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
         <div onclick="toggleHissuHome()" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:12px;padding:12px 16px;cursor:pointer;" id="hissu-home-toggle">
@@ -546,6 +545,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
             <span id="hissu-home-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
           </label>
         </div>
+        </div><!-- /setup-area -->
 
         <!-- クイズ進行エリア（スタート前は非表示） -->
         <div id="quiz-area" style="display:none;">
