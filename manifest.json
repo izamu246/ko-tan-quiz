@@ -1,0 +1,22 @@
+{
+  "name": "工事担任者 工担攻略システム",
+  "short_name": "工担攻略",
+  "description": "デジタル第1級 過去問クイズ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b4259",
+  "theme_color": "#0b4259",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://izamu246.github.io/ko-tan-quiz/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://izamu246.github.io/ko-tan-quiz/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
