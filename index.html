@@ -1068,6 +1068,7 @@ function startQuiz(){
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
   var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
+  _stopPeriodicMsg();
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1088,6 +1089,7 @@ function retryQuiz(){
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
   var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
+  _stopPeriodicMsg();
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1107,6 +1109,7 @@ function retryWrongOnly(){
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
   var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
+  _stopPeriodicMsg();
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1145,6 +1148,7 @@ function startHissuPhase(){
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
   var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
+  _stopPeriodicMsg();
   showToast('🔄 解き直しフェーズ開始！正解するまで繰り返します');
   showScreen('screen-setup');
   renderQuestion();
@@ -1397,6 +1401,7 @@ function resumeQuiz(){
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
   var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
+  _stopPeriodicMsg();
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1955,6 +1960,7 @@ function _startNigateQuiz(){
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
   var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
+  _stopPeriodicMsg();
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -2068,6 +2074,13 @@ function _showPeriodicMsg(){
     toast.style.opacity = '0';
     setTimeout(function(){ toast.style.display='none'; }, 500);
   }, 12000);
+}
+
+
+function _stopPeriodicMsg(){
+  if(_periodicTimer){clearInterval(_periodicTimer);_periodicTimer=null;}
+  var toast=document.getElementById('greeting-toast');
+  if(toast){toast.style.display='none';toast.style.opacity='0';}
 }
 
 function _startPeriodicMsg(){
