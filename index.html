@@ -1067,6 +1067,7 @@ function startQuiz(){
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1086,6 +1087,7 @@ function retryQuiz(){
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1104,6 +1106,7 @@ function retryWrongOnly(){
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1141,6 +1144,7 @@ function startHissuPhase(){
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
   showToast('🔄 解き直しフェーズ開始！正解するまで繰り返します');
   showScreen('screen-setup');
   renderQuestion();
@@ -1392,6 +1396,7 @@ function resumeQuiz(){
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
@@ -1949,6 +1954,7 @@ function _startNigateQuiz(){
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
   showScreen('screen-setup');
   renderQuestion();
 }
