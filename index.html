@@ -599,7 +599,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         <div class="result-btns">
           <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度</button>
           <button class="btn-retry" id="btn-retry-wrongs" onclick="retryWrongOnly()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">❌ 間違えた<span id="wrongs-count"></span>問だけ解き直す</button>
-          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';showScreen('screen-setup')">⚙ 設定に戻る</button>
+          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';var _ht2=document.getElementById('hissu-home-toggle');if(_ht2){_ht2.style.pointerEvents='';_ht2.style.opacity='';}showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
     </div>
@@ -1062,6 +1062,8 @@ function startQuiz(){
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=false;
   isNigateMode=false;
+  isHissuPhase=false;
+  hissuWrongs=[];
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
@@ -1358,6 +1360,7 @@ function confirmAbort(){
     document.getElementById('nav-tabs').style.display='';
     var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
     var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
+    var _ht=document.getElementById('hissu-home-toggle');if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
     showScreen('screen-setup');
     checkResumeBanner();
   }
@@ -1396,6 +1399,9 @@ function resumeQuiz(){
   score=d.score;combo=d.combo;maxCombo=d.maxCombo;
   sessionResults=d.sessionResults||[];settings=d.settings||settings;
   setHistoryTabEnabled(false);
+  // 再開時はスイッチを無効化
+  var ht=document.getElementById('hissu-home-toggle');
+  if(ht){ht.style.pointerEvents='none';ht.style.opacity='0.4';}
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
