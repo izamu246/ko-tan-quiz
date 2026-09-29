@@ -1380,6 +1380,19 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
     btnNext.style.display='block';
     return;
   }
+  if(isLastQ&&isHissuMode&&!isHissuPhase&&!isRetryMode&&!isNigateMode){
+    // 解き直し必須モード：間違いあり→即解き直し開始、なし→結果表示
+    btnNext.textContent='次へ →';
+    btnNext.onclick=function(){
+      if(hissuWrongs.length>0){
+        startHissuPhase();
+      } else {
+        startEvaOrResult();
+      }
+    };
+    btnNext.style.display='block';
+    return;
+  }
   if(isLastQ){
     btnNext.textContent='📊 結果を見る';
     btnNext.onclick=function(){ startEvaOrResult(); };
