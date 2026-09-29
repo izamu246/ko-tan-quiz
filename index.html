@@ -1195,11 +1195,11 @@ function renderQuestion(){
 
   // 出典表示
   const subLabel=q['科目']&&q['科目'].includes('技術')?'技術':'法規';
-  const sourceText=q['年度']+'年 第'+q['回']+'回 '+subLabel+' '+q['問番号']+'問 '+q['空欄記号']+'より';
+  const sourceText=q['年度']+'年 第'+q['回']+'回 '+subLabel+' '+q['問番号']+' '+q['空欄記号']+'より';
   document.getElementById('q-source').textContent=sourceText;
 
   // q-tag
-  document.getElementById('q-tag').textContent=subLabel+'　'+q['問番号']+'問';
+  document.getElementById('q-tag').textContent=subLabel+'　'+q['問番号'];
 
   // 大問本文（第問題(文脈) 列）
   const mainText=q['第問題(文脈)']||q['第問題（文脈）']||'';
@@ -1786,9 +1786,9 @@ function renderReviewHistQuestion(){
   // 出典
   const subLabel=q['科目']&&q['科目'].includes('技術')?'技術':'法規';
   document.getElementById('review-hist-source').textContent=
-    q['年度']+'年 第'+q['回']+'回 '+subLabel+' '+q['問番号']+'問 '+q['空欄記号']+'より';
+    q['年度']+'年 第'+q['回']+'回 '+subLabel+' '+q['問番号']+' '+q['空欄記号']+'より';
   document.getElementById('review-hist-num').textContent=(_reviewHistIdx+1)+'問目';
-  document.getElementById('review-hist-tag').textContent=subLabel+'　'+q['問番号']+'問';
+  document.getElementById('review-hist-tag').textContent=subLabel+'　'+q['問番号'];
 
   // 大問本文
   const mainText=q['第問題(文脈)']||q['第問題（文脈）']||'';
