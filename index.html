@@ -547,6 +547,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         </div>
         <label class="setup-label">問題数</label>
         <div class="btn-group" id="count-btns">
+          <button class="btn-toggle" data-val="5" onclick="selectBtn(this,'count-btns')">5問</button>
           <button class="btn-toggle active" data-val="10" onclick="selectBtn(this,'count-btns')">10問</button>
           <button class="btn-toggle" data-val="25" onclick="selectBtn(this,'count-btns')">25問</button>
           <button class="btn-toggle" id="btn-30" data-val="30" onclick="selectBtn(this,'count-btns')" style="display:none;">30問</button>
@@ -1693,7 +1694,7 @@ function startEvaOrResult(){
   }catch(e){}
   const total=quizQueue.length;
   const perfect=(score===total);
-  const isWhite=(total===5&&perfect&&!isRetryMode&&!isNigateMode);
+  const isWhite=(total===5&&perfect&&!isRetryMode&&!isNigateMode&&false); // 5問演出なし
   const isBlack=(total>=10&&perfect&&!isRetryMode&&!isNigateMode);
 
   if(isWhite){
