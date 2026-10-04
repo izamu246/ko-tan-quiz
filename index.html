@@ -1382,15 +1382,9 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
     return;
   }
   if(isLastQ&&isHissuMode&&!isHissuPhase&&!isRetryMode&&!isNigateMode){
-    // 解き直し必須モード：間違いあり→即解き直し開始、なし→結果表示
-    btnNext.textContent='次へ →';
-    btnNext.onclick=function(){
-      if(hissuWrongs.length>0){
-        startHissuPhase();
-      } else {
-        startEvaOrResult();
-      }
-    };
+    // 解き直し必須モード：まず通常結果画面を表示
+    btnNext.textContent='📊 結果を見る';
+    btnNext.onclick=function(){ startEvaOrResult(); };
     btnNext.style.display='block';
     return;
   }
@@ -1450,13 +1444,14 @@ function showHissuComplete(){
       overlay.style.display='none';
       isHissuPhase=false;
       hissuWrongs=[];
-      // 設定画面に戻る（履歴には保存しない）
+      var _ht=document.getElementById('hissu-home-toggle');
+      if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
+      // 設定画面に戻る
       setHistoryTabEnabled(true);
       document.getElementById('site-header').style.display='';
       document.getElementById('nav-tabs').style.display='';
       var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
       var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
-      var _ht=document.getElementById('hissu-home-toggle');if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
       showScreen('screen-setup');
       checkResumeBanner();
     },2500);
@@ -1643,7 +1638,7 @@ function showResult(){
   document.getElementById('stat-correct').textContent=score;
   document.getElementById('stat-wrong').textContent=total-score;
   document.getElementById('stat-combo').textContent=maxCombo;
-  if(!isNigateMode){
+  if(!isNigateMode&&!isHissuPhase){
     saveHistory({date:new Date().toISOString(),score,total,pct,pass,subject:settings.subject});
   }
   // 苦手克服モードは通常履歴に含めない（別管理）
