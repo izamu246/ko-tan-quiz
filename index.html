@@ -1135,6 +1135,13 @@ function retryWrongOnly(){
 
 
 // ===== 解き直し必須モード =====
+var _hissuOrigScore=0;
+var _hissuOrigTotal=0;
+var _hissuOrigPct=0;
+var _hissuOrigPass=false;
+var _hissuOrigSubject='';
+var _hissuOrigMaxCombo=0;
+
 var isHissuMode=false;
 var hissuWrongs=[];
 var isHissuPhase=false;
@@ -1155,6 +1162,13 @@ function toggleHissuHome(){
 
 function startHissuPhase(){
   if(!hissuWrongs.length) return;
+  // 元のスコアを保存
+  _hissuOrigScore=score;
+  _hissuOrigTotal=settings.count;
+  _hissuOrigPct=Math.round(score/settings.count*100);
+  _hissuOrigPass=_hissuOrigPct>=60;
+  _hissuOrigSubject=settings.subject;
+  _hissuOrigMaxCombo=maxCombo;
   // 暗転演出
   var overlay=document.getElementById('hissu-start-overlay');
   var text=document.getElementById('hissu-start-text');
@@ -1382,9 +1396,15 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
     return;
   }
   if(isLastQ&&isHissuMode&&!isHissuPhase&&!isRetryMode&&!isNigateMode){
-    // 解き直し必須モード：まず通常結果画面を表示
-    btnNext.textContent='📊 結果を見る';
-    btnNext.onclick=function(){ startEvaOrResult(); };
+    // 解き直し必須モード：結果スキップして即解き直し or 全問正解なら結果表示
+    if(hissuWrongs.length>0){
+      btnNext.textContent='🔄 解き直し開始';
+      btnNext.onclick=function(){ startHissuPhase(); };
+    } else {
+      // 全問正解：そのまま結果表示
+      btnNext.textContent='📊 結果を見る';
+      btnNext.onclick=function(){ startEvaOrResult(); };
+    }
     btnNext.style.display='block';
     return;
   }
@@ -1446,32 +1466,53 @@ function showHissuComplete(){
       hissuWrongs=[];
       var _ht=document.getElementById('hissu-home-toggle');
       if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
-      // 設定画面に戻る
-      setHistoryTabEnabled(true);
-      document.getElementById('site-header').style.display='';
-      document.getElementById('nav-tabs').style.display='';
-      var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
-      var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
-      showScreen('screen-setup');
-      checkResumeBanner();
+      // 通常結果画面を表示（スコアは最初の10問のもの）
+      _showResultAfterHissu();
     },2500);
+  } else {
+    isHissuPhase=false;
+    hissuWrongs=[];
+    _showResultAfterHissu();
   }
+}
+
+function _showResultAfterHissu(){
+  // 履歴保存してから結果画面へ
+  saveHistory({date:new Date().toISOString(),score:_hissuOrigScore,total:_hissuOrigTotal,
+    pct:_hissuOrigPct,pass:_hissuOrigPass,subject:_hissuOrigSubject});
+  // 結果画面の値を元の10問スコアに戻す
+  score=_hissuOrigScore;
+  var total=_hissuOrigTotal;
+  var pct=_hissuOrigPct;
+  var pass=_hissuOrigPass;
+  setHistoryTabEnabled(true);
+  document.getElementById('site-header').style.display='';
+  document.getElementById('nav-tabs').style.display='';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
+  var _ht=document.getElementById('hissu-home-toggle');
+  if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
+  showScreen('screen-result');
+  // 結果画面の表示を更新
+  document.getElementById('result-score-num').textContent=_hissuOrigScore;
+  document.getElementById('result-total-num').textContent=_hissuOrigTotal;
+  var ring=document.getElementById('result-pct');if(ring)ring.textContent=_hissuOrigPct+'%';
+  var chip=document.getElementById('pass-chip');
+  if(chip){chip.textContent=_hissuOrigPass?'✓ 合格ライン超え (60%以上)':'✗ 不合格ライン (60%未満)';
+  chip.className='pass-chip '+(_hissuOrigPass?'pass':'fail');}
+  document.getElementById('stat-correct').textContent=_hissuOrigScore;
+  document.getElementById('stat-wrong').textContent=_hissuOrigTotal-_hissuOrigScore;
+  document.getElementById('stat-combo').textContent=_hissuOrigMaxCombo||0;
+  var wBtn=document.getElementById('btn-retry-wrongs');if(wBtn)wBtn.style.display='none';
 }
 
 function handleAbort(){
   if(isHissuPhase){
-    // 解き直し中は強制終了
-    if(confirm('解き直しを強制終了しますか？')){
+    // 解き直し中は終了→結果画面へ
+    if(confirm('解き直しを終了して結果を表示しますか？')){
       isHissuPhase=false;
       hissuWrongs=[];
-      setHistoryTabEnabled(true);
-      document.getElementById('site-header').style.display='';
-      document.getElementById('nav-tabs').style.display='';
-      var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
-      var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
-      var _ht=document.getElementById('hissu-home-toggle');if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
-      showScreen('screen-setup');
-      checkResumeBanner();
+      _showResultAfterHissu();
     }
   } else {
     confirmAbort();
@@ -1638,9 +1679,10 @@ function showResult(){
   document.getElementById('stat-correct').textContent=score;
   document.getElementById('stat-wrong').textContent=total-score;
   document.getElementById('stat-combo').textContent=maxCombo;
-  if(!isNigateMode&&!isHissuPhase){
+  if(!isNigateMode&&!isHissuPhase&&!isHissuMode){
     saveHistory({date:new Date().toISOString(),score,total,pct,pass,subject:settings.subject});
   }
+  // 解き直し必須モード（フェーズ終了後）は結果表示時に保存済み
   // 苦手克服モードは通常履歴に含めない（別管理）
   discardResume();
   // 解き直し必須モード：通常フェーズ後に自動で解き直しフェーズへ
