@@ -608,6 +608,18 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
       </div>
     </div>
 
+    <!-- カスタム確認ダイアログ -->
+    <div id="custom-dialog-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:none;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:32px 24px 20px;margin:24px;max-width:340px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.3);text-align:center;">
+        <div style="font-size:2rem;margin-bottom:12px;">⚠️</div>
+        <div id="custom-dialog-msg" style="font-size:1.05rem;font-weight:600;color:#1a1a2e;line-height:1.6;margin-bottom:24px;"></div>
+        <div style="display:flex;gap:12px;">
+          <button onclick="_dialogCancel()" style="flex:1;padding:14px;border-radius:12px;border:2px solid #e0ddd6;background:#f2f0eb;font-size:1rem;font-weight:600;color:#888;cursor:pointer;">キャンセル</button>
+          <button onclick="_dialogOk()" style="flex:1;padding:14px;border-radius:12px;border:none;background:#e8380d;font-size:1rem;font-weight:700;color:#fff;cursor:pointer;">中断する</button>
+        </div>
+      </div>
+    </div>
+
     <!-- RESULT -->
     <div id="screen-result" class="screen">
       <div class="card card-luxury">
