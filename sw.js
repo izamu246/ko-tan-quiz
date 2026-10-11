@@ -1,5 +1,5 @@
 // Service Worker - 工担攻略システム
-const CACHE_NAME = 'kotan-v1';
+const CACHE_NAME = 'kotan-v2';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
