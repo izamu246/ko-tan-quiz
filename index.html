@@ -1494,9 +1494,12 @@ function _showResultAfterHissu(){
   if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
   showScreen('screen-result');
   // 結果画面の表示を更新
-  document.getElementById('result-score-num').textContent=_hissuOrigScore;
-  document.getElementById('result-total-num').textContent=_hissuOrigTotal;
-  var ring=document.getElementById('result-pct');if(ring)ring.textContent=_hissuOrigPct+'%';
+  document.getElementById('score-pct').textContent=_hissuOrigPct+'%';
+  document.getElementById('score-frac').textContent=_hissuOrigScore+'/'+_hissuOrigTotal;
+  var _nn=_getNickname()||'';var _nh=_getHonorific()||'さん';var _nnLabel=_nn?_nn+_nh+'、':'';
+  var rlabel=document.getElementById('result-label');
+  if(rlabel)rlabel.textContent=_hissuOrigPass?_nnLabel+'合格ライン達成！🎉':_nnLabel+'もう少し！頑張ろう';
+  var ring=document.getElementById('score-ring');if(ring)ring.className='score-ring '+(_hissuOrigPass?'pass':'fail');
   var chip=document.getElementById('pass-chip');
   if(chip){chip.textContent=_hissuOrigPass?'✓ 合格ライン超え (60%以上)':'✗ 不合格ライン (60%未満)';
   chip.className='pass-chip '+(_hissuOrigPass?'pass':'fail');}
