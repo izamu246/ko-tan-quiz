@@ -1495,13 +1495,9 @@ function markLucky(id, q){
   if(isHissuMode&&!isRetryMode&&q){
     if(!hissuWrongs.find(function(w){return w['ID']===id;})){hissuWrongs.push(q);}
   }
-  var btn=document.getElementById('lucky-btn');
-  if(btn){
-    btn.disabled=true;
-    btn.style.opacity='0.5';
-    btn.innerHTML='📌 追加済み';
-  }
   showToast('📌 苦手リストに追加しました');
+  // 次のボタンと同じ挙動
+  document.getElementById('btn-next').click();
 }
 
 function nextQuestion(){
