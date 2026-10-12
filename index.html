@@ -1391,7 +1391,7 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
   });
   if(isCorrect){score++;combo++;if(combo>maxCombo)maxCombo=combo;if(!isHissuPhase)_removeNigate(q['ID']);}else{combo=0;if(!isHissuPhase){_addNigate(q['ID']);if(isHissuMode&&!isRetryMode)hissuWrongs.push(q);}}
   animateStamp(isCorrect);
-  renderExplanation(q, displayCorrectNum);
+  renderExplanation(q, displayCorrectNum, isCorrect);
   sessionResults.push({q,chosen:choiceIdx,correct:isCorrect,displayCorrectNum});
   saveResume();
   const btnNext=document.getElementById('btn-next');
@@ -1545,8 +1545,24 @@ function handleAbort(){
   }
 }
 
+var _dialogOkFn=null;
+function _dialogOk(){
+  document.getElementById('custom-dialog-overlay').style.display='none';
+  if(_dialogOkFn)_dialogOkFn();
+  _dialogOkFn=null;
+}
+function _dialogCancel(){
+  document.getElementById('custom-dialog-overlay').style.display='none';
+  _dialogOkFn=null;
+}
+function showConfirm(msg,okFn){
+  document.getElementById('custom-dialog-msg').textContent=msg;
+  _dialogOkFn=okFn;
+  var el=document.getElementById('custom-dialog-overlay');
+  el.style.display='flex';
+}
 function confirmAbort(){
-  if(confirm('クイズを中断しますか？（途中まで保存されます）')){
+  showConfirm('クイズを中断しますか？\n途中まで保存されます',function(){
     saveResume();
     setHistoryTabEnabled(true);
     document.getElementById('site-header').style.display='';
@@ -1556,7 +1572,7 @@ function confirmAbort(){
     var _ht=document.getElementById('hissu-home-toggle');if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
     showScreen('screen-setup');
     checkResumeBanner();
-  }
+  });
 }
 
 // ===== RESUME =====
