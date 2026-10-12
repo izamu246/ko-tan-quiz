@@ -132,8 +132,8 @@ function doInstall() {
       deferredPrompt = null;
     });
   } else {
-    // プロンプトが使えない場合はアプリを開く
-    window.location.href = './index.html';
+    // プロンプトが使えない場合はブラウザのメニューを案内
+    alert('ブラウザのメニュー（右上の︙）→「ホーム画面に追加」をタップしてください');
   }
 }
 
