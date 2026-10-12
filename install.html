@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>工担攻略システム インストール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  min-height:100svh;
+  background:linear-gradient(160deg,#0b4259 0%,#0ea5c8 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Noto Sans JP',sans-serif;
+  padding:24px;
+}
+.card{
+  background:rgba(255,255,255,0.97);
+  border-radius:24px;
+  padding:40px 28px 32px;
+  max-width:380px;width:100%;
+  text-align:center;
+  box-shadow:0 12px 48px rgba(0,0,0,0.25);
+}
+.icon{
+  width:96px;height:96px;border-radius:22px;
+  background:linear-gradient(135deg,#0b4259,#0ea5c8);
+  margin:0 auto 20px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(11,66,89,0.35);
+  overflow:hidden;
+}
+.icon img{width:100%;height:100%;object-fit:cover;}
+.app-name{
+  font-family:'Noto Serif JP',serif;
+  font-size:22px;font-weight:900;color:#0b4259;
+  margin-bottom:6px;letter-spacing:1px;
+}
+.app-sub{
+  font-size:13px;color:#0ea5c8;font-weight:700;
+  margin-bottom:6px;letter-spacing:0.5px;
+}
+.app-desc{
+  font-size:13px;color:#666;margin-bottom:28px;line-height:1.7;
+}
+.features{
+  background:#f2f0eb;border-radius:14px;
+  padding:16px;margin-bottom:28px;text-align:left;
+}
+.feature{
+  font-size:13px;color:#444;padding:5px 0;display:flex;align-items:center;gap:10px;
+}
+.feature span{font-size:18px;}
+#btn-install{
+  width:100%;padding:18px;
+  background:linear-gradient(135deg,#0b4259,#0ea5c8);
+  color:white;border:none;border-radius:14px;
+  font-family:'Noto Serif JP',serif;
+  font-size:17px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 16px rgba(11,66,89,0.35);
+  letter-spacing:1px;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+#btn-install:active{transform:scale(0.97);}
+#btn-install:disabled{
+  background:#ccc;box-shadow:none;cursor:default;
+}
+#btn-open{
+  display:none;
+  width:100%;padding:18px;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:white;border:none;border-radius:14px;
+  font-family:'Noto Serif JP',serif;
+  font-size:17px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 16px rgba(22,163,74,0.35);
+  letter-spacing:1px;
+  text-decoration:none;
+  align-items:center;justify-content:center;gap:10px;
+}
+.note{font-size:11px;color:#999;margin-top:14px;line-height:1.6;}
+.installed-msg{display:none;font-size:13px;color:#16a34a;font-weight:700;margin-top:12px;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">
+    <img src="icon-192.png" alt="工担攻略">
+  </div>
+  <div class="app-name">工担攻略システム</div>
+  <div class="app-sub">工事担任者 デジタル第１級</div>
+  <div class="app-desc">過去問クイズで合格を目指そう！<br>全550問・苦手克服・解き直し機能搭載</div>
+
+  <div class="features">
+    <div class="feature"><span>📚</span>全550問の過去問収録</div>
+    <div class="feature"><span>🎯</span>苦手克服モード</div>
+    <div class="feature"><span>🔄</span>解き直し必須モード</div>
+    <div class="feature"><span>📊</span>成績履歴グラフ</div>
+    <div class="feature"><span>📴</span>オフラインでも使える</div>
+  </div>
+
+  <button id="btn-install" onclick="doInstall()">
+    📲 アプリをインストール
+  </button>
+  <a id="btn-open" href="./index.html">
+    ✅ アプリを開く
+  </a>
+  <div class="installed-msg" id="installed-msg">✅ インストール済みです</div>
+  <div class="note" id="note-text">ホーム画面に追加してアプリとして使えます</div>
+</div>
+
+<script>
+var deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('btn-install').disabled = false;
+});
+
+window.addEventListener('appinstalled', function() {
+  deferredPrompt = null;
+  showInstalled();
+});
+
+function doInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(result) {
+      if (result.outcome === 'accepted') {
+        showInstalled();
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    // プロンプトが使えない場合はアプリを開く
+    window.location.href = './index.html';
+  }
+}
+
+function showInstalled() {
+  document.getElementById('btn-install').style.display = 'none';
+  document.getElementById('btn-open').style.display = 'flex';
+  document.getElementById('note-text').style.display = 'none';
+}
+
+// 既にインストール済みかチェック
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  // PWAとして起動中 → アプリを開くボタン
+  document.getElementById('btn-install').style.display = 'none';
+  document.getElementById('btn-open').style.display = 'flex';
+  document.getElementById('note-text').style.display = 'none';
+} else {
+  // ブラウザで開いている → インストールボタン（プロンプト待ち）
+  document.getElementById('btn-install').disabled = true;
+  // 少し待ってもbeforeinstallpromptが来なければ案内文を変える
+  setTimeout(function() {
+    if (!deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+      document.getElementById('btn-install').disabled = false;
+      document.getElementById('note-text').textContent =
+        'ブラウザのメニュー →「ホーム画面に追加」からインストールできます';
+    }
+  }, 1500);
+}
+</script>
+</body>
+</html>
