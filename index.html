@@ -1454,12 +1454,22 @@ function animateStamp(ok){
 
 const MARU=['','①','②','③','④','⑤','⑥'];
 
-function renderExplanation(q, correctNum){
+function renderExplanation(q, correctNum, isCorrect){
   const area=document.getElementById('explanation-area');
   const trap=(q['exp_kakutu']||'').trim();
   const norm=(q['exp_normal']||'').trim();
   const maru=correctNum&&MARU[correctNum]?MARU[correctNum]:'';
   let html='';
+  // ラッキー正解ボタン（正解時のみ、解き直しフェーズ以外）
+  if(isCorrect&&!isHissuPhase){
+    const alreadyNigate=_getNigateList().includes(q['ID']);
+    html+=`<div id="lucky-btn-area" style="margin-bottom:10px;">
+      <button id="lucky-btn" onclick="markLucky('${q['ID']}')" style="width:100%;padding:12px;border-radius:12px;border:2px dashed #b8982a;background:#fffbf0;color:#b8982a;font-size:14px;font-weight:700;cursor:pointer;display:${alreadyNigate?'none':'block'};">
+        🎲 ラッキー正解（苦手に追加）
+      </button>
+      <div id="lucky-done" style="display:${alreadyNigate?'block':'none'};text-align:center;padding:10px;color:#b8982a;font-size:13px;font-weight:700;">📌 苦手リストに追加済み</div>
+    </div>`;
+  }
   if(trap){
     html+=`<div class="exp-trap-box"><div class="exp-trap-label">⚠️ 要注意ポイント</div>${escHtml(trap)}</div>`;
   }
@@ -1469,6 +1479,17 @@ function renderExplanation(q, correctNum){
     html+=`<div class="exp-box exp-normal-box" style="margin-top:${trap?'8px':'12px'};"><div class="exp-label">📖 解説</div>${maruHtml}${normHtml}</div>`;
   }
   area.innerHTML=html;
+}
+function markLucky(id){
+  _addNigate(id);
+  // 不正解扱いで解き直し必須にも追加
+  if(isHissuMode&&!isRetryMode){
+    var q=QUESTIONS.find(function(q){return q['ID']===id;});
+    if(q&&!hissuWrongs.find(function(w){return w['ID']===id;})){hissuWrongs.push(q);}
+  }
+  var btn=document.getElementById('lucky-btn');if(btn)btn.style.display='none';
+  var done=document.getElementById('lucky-done');if(done)done.style.display='block';
+  showToast('📌 苦手リストに追加しました');
 }
 
 function nextQuestion(){
