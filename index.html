@@ -1531,9 +1531,7 @@ function showHissuComplete(){
 }
 
 function _showResultAfterHissu(){
-  // 履歴保存してから結果画面へ
-  saveHistory({date:new Date().toISOString(),score:_hissuOrigScore,total:_hissuOrigTotal,
-    pct:_hissuOrigPct,pass:_hissuOrigPass,subject:_hissuOrigSubject});
+  // 解き直し必須フェーズ後は履歴保存しない（通常フェーズ完了時に保存済み）
   // 結果画面の値を元の10問スコアに戻す
   score=_hissuOrigScore;
   var total=_hissuOrigTotal;
@@ -1566,11 +1564,11 @@ function _showResultAfterHissu(){
 function handleAbort(){
   if(isHissuPhase){
     // 解き直し中は終了→結果画面へ
-    if(confirm('解き直しを終了して結果を表示しますか？')){
+    showConfirm('解き直しを終了して結果を表示しますか？',function(){
       isHissuPhase=false;
       hissuWrongs=[];
       _showResultAfterHissu();
-    }
+    });
   } else {
     confirmAbort();
   }
@@ -1760,11 +1758,10 @@ function showResult(){
   document.getElementById('stat-correct').textContent=score;
   document.getElementById('stat-wrong').textContent=total-score;
   document.getElementById('stat-combo').textContent=maxCombo;
-  if(!isNigateMode&&!isHissuPhase&&!isHissuMode){
+  // 苦手克服モード・解き直しフェーズ以外は履歴保存
+  if(!isNigateMode&&!isHissuPhase){
     saveHistory({date:new Date().toISOString(),score,total,pct,pass,subject:settings.subject});
   }
-  // 解き直し必須モード（フェーズ終了後）は結果表示時に保存済み
-  // 苦手克服モードは通常履歴に含めない（別管理）
   discardResume();
   // 解き直し必須モード：通常フェーズ後に自動で解き直しフェーズへ
   // 解き直しフェーズの結果は履歴保存しない
