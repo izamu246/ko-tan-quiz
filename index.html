@@ -1370,7 +1370,7 @@ function renderQuestion(){
     if(!sb)return;
     var qnum=q['問番号']||'';
     var qtext=(q['問題文（文脈）']||q['第問題(文脈)']||q['第問題（文脈）']||'').replace(/\s+/g,' ').trim().slice(0,40);
-    var query='工事担任者 デジタル第一級 '+subLabel+' '+q['年度']+'年 第'+q['回']+'回 '+qnum+(qtext?' '+qtext:'');
+    var query='工事担任者 デジタル第一級 '+subLabel+' '+q['年度']+'年 第'+q['回']+'回 '+qnum+(qtext?' '+qtext:'')+'  解説 答え';
     sb.dataset.query=query;
     sb.style.display='inline-block';
   })();
