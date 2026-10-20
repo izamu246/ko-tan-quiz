@@ -592,7 +592,10 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
               </div>
             </div>
           </div>
-          <div id="q-source" class="q-source"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <div id="q-source" class="q-source" style="margin-bottom:0;"></div>
+            <button id="btn-search-ex" onclick="searchQuestion()" style="display:none;font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid rgba(14,165,200,0.4);background:rgba(14,165,200,0.08);color:#0b4259;cursor:pointer;white-space:nowrap;font-weight:700;letter-spacing:0.3px;">🔍 解説検索</button>
+          </div>
           <div id="q-num" class="q-num"></div>
           <div id="q-tag" class="q-tag"></div>
           <div id="q-main-wrap" style="display:none;"></div>
@@ -1361,6 +1364,15 @@ function renderQuestion(){
   const subLabel=q['科目']&&q['科目'].includes('技術')?'技術':'法規';
   const sourceText=q['年度']+'年 第'+q['回']+'回 '+subLabel+' '+q['問番号']+' '+q['空欄記号']+'より';
   document.getElementById('q-source').textContent=sourceText;
+  // 解説検索ボタン
+  (function(){
+    var sb=document.getElementById('btn-search-ex');
+    if(!sb)return;
+    var qnum=q['問番号']||'';
+    var query='工事担任者 '+q['年度']+'年 第'+q['回']+'回 '+subLabel+' '+qnum;
+    sb.dataset.query=query;
+    sb.style.display='inline-block';
+  })();
 
   // q-tag
   document.getElementById('q-tag').textContent=subLabel+'　'+q['問番号'];
@@ -1641,6 +1653,12 @@ function showConfirm(msg,okFn){
   _dialogOkFn=okFn;
   var el=document.getElementById('custom-dialog-overlay');
   el.style.display='flex';
+}
+function searchQuestion(){
+  var sb=document.getElementById('btn-search-ex');
+  var query=sb&&sb.dataset.query;
+  if(!query)return;
+  window.open('https://www.google.com/search?q='+encodeURIComponent(query),'_blank');
 }
 function confirmResetNigate(){
   var count=_getNigateList().length;
