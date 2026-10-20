@@ -794,7 +794,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
 const QUESTIONS=[];
 
 // ===== STATE =====
-let settings={subject:'技術',order:'random',count:10};
+let settings=(function(){try{var s=localStorage.getItem('_quiz_settings');if(s){var p=JSON.parse(s);return {subject:p.subject||'技術',order:p.order||'random',count:p.count||10,yearRound:p.yearRound||null};}}catch(e){}return {subject:'技術',order:'random',count:10};})();
 let isRetryMode=false; // 解き直しモードフラグ
 let isNigateMode=false;
 let quizQueue=[],currentIdx=0,answered=false;
@@ -834,6 +834,28 @@ let score=0,combo=0,maxCombo=0,sessionResults=[];
 
 document.addEventListener('DOMContentLoaded',()=>{
   buildYearButtons();
+  // 保存済み設定をUIに反映
+  (function(){
+    document.querySelectorAll('#subject-btns .btn-toggle').forEach(function(b){
+      b.classList.toggle('active', b.dataset.val===settings.subject);
+    });
+    document.querySelectorAll('#order-btns .btn-toggle').forEach(function(b){
+      b.classList.toggle('active', b.dataset.val===settings.order);
+    });
+    document.querySelectorAll('#count-btns .btn-toggle').forEach(function(b){
+      b.classList.toggle('active', parseInt(b.dataset.val)===settings.count);
+    });
+    // 年度指定が保存されていたらピッカー表示
+    if(settings.order==='year'){
+      var yp=document.getElementById('year-picker');
+      if(yp)yp.style.display='block';
+      if(settings.yearRound){
+        document.querySelectorAll('#year-btns .btn-toggle').forEach(function(b){
+          b.classList.toggle('active', b.dataset.val===settings.yearRound);
+        });
+      }
+    }
+  })();
   updateCount50();
   renderHistory();
   // 履歴タイトルにニックネーム
@@ -1052,6 +1074,7 @@ function selectBtn(btn,gid){
   else if(gid==='order-btns')settings.order=btn.dataset.val;
   else if(gid==='year-btns')settings.yearRound=btn.dataset.val;
   else if(gid==='count-btns')settings.count=parseInt(btn.dataset.val);
+  try{localStorage.setItem('_quiz_settings',JSON.stringify({subject:settings.subject,order:settings.order,count:settings.count,yearRound:settings.yearRound||null}));}catch(e){}
 }
 
 function toggleYearPicker(){
@@ -1122,11 +1145,40 @@ function startQuiz(){
 // ===== RETRY =====
 function retryQuiz(){
   discardResume();
-  let shuffled=shuffle(quizQueue);
-  if(shuffled.length>1&&shuffled[0]===quizQueue[0]){shuffled=shuffle(shuffled);}
-  quizQueue=shuffled;
+  // 新規で問題を引き直す（startQuizと同じロジック）
+  let pool=QUESTIONS.filter(q=>{
+    if(settings.subject==='技術')return q['科目']&&q['科目'].includes('技術');
+    if(settings.subject==='法規')return q['科目']&&q['科目'].includes('法規');
+    return true;
+  });
+  if(settings.order==='year'&&settings.yearRound){
+    const [yr,rnd]=settings.yearRound.split('_');
+    pool=pool.filter(q=>q['年度']===yr&&String(q['回'])===rnd);
+  }
+  if(!pool.length){showToast('該当する問題がありません');return;}
+  const isSeq=settings.order==='year'&&(
+    (settings.count===25&&settings.subject!=='両方')||
+    (settings.count===50&&settings.subject==='両方')
+  );
+  if(isSeq){
+    quizQueue=pool.slice(0,settings.count);
+  }else if(settings.order==='year'&&settings.yearRound){
+    const boxKey='_lotteryBox_yr_'+settings.yearRound+'_'+settings.subject;
+    quizQueue=lotteryDraw(pool, settings.count, boxKey);
+  }else if(settings.subject==='両方'){
+    const gPool=pool.filter(q=>q['科目']&&q['科目'].includes('技術'));
+    const hPool=pool.filter(q=>q['科目']&&q['科目'].includes('法規'));
+    const half=Math.floor(settings.count/2);
+    const rem=settings.count%2;
+    const gPick=lotteryDraw(gPool, half+(rem===1?1:0), '_lotteryBox_gijutsu');
+    const hPick=lotteryDraw(hPool, half, '_lotteryBox_hoki');
+    quizQueue=shuffle([...gPick,...hPick]);
+  }else{
+    const boxKey='_lotteryBox_'+settings.subject;
+    quizQueue=lotteryDraw(pool, settings.count, boxKey);
+  }
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
-  isRetryMode=true;
+  isRetryMode=false;
   isNigateMode=false;
   // スイッチ状態を維持（isKaerema10Modeはそのまま）
   setHistoryTabEnabled(false);
