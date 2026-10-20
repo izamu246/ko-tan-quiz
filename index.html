@@ -1659,7 +1659,7 @@ function searchQuestion(){
   var sb=document.getElementById('btn-search-ex');
   var query=sb&&sb.dataset.query;
   if(!query)return;
-  window.open('https://www.google.com/search?q='+encodeURIComponent(query),'_blank');
+  window.open('https://www.google.com/search?q='+encodeURIComponent(query)+'&udm=50','_blank');
 }
 function confirmResetNigate(){
   var count=_getNigateList().length;
