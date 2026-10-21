@@ -594,7 +594,10 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
             <div id="q-source" class="q-source" style="margin-bottom:0;"></div>
-            <button id="btn-search-ex" onclick="searchQuestion()" style="display:none;font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid rgba(14,165,200,0.4);background:rgba(14,165,200,0.08);color:#0b4259;cursor:pointer;white-space:nowrap;font-weight:700;letter-spacing:0.3px;">🔍 解説検索</button>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+              <button id="btn-search-ex" onclick="searchQuestion()" style="display:none;font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid rgba(14,165,200,0.4);background:rgba(14,165,200,0.08);color:#0b4259;cursor:pointer;white-space:nowrap;font-weight:700;letter-spacing:0.3px;">🔍 解説検索</button>
+              <span id="btn-search-note" style="display:none;font-size:9px;color:#aaa;white-space:nowrap;">※番号は冊子準拠</span>
+            </div>
           </div>
           <div id="q-num" class="q-num"></div>
           <div id="q-tag" class="q-tag"></div>
@@ -1376,6 +1379,7 @@ function renderQuestion(){
     var query='工事担任者 '+(qtext?qtext+' ':'')+choiceText+' 解説 答え';
     sb.dataset.query=query;
     sb.style.display='inline-block';
+    var sn=document.getElementById('btn-search-note');if(sn)sn.style.display='block';
   })();
 
   // q-tag
