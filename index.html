@@ -1506,6 +1506,18 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
       btnNext.onclick=function(){ startEvaOrResult(); };
     }
     btnNext.style.display='block';
+    // ラッキー正解ボタン（最終問題・解き直し必須モード）
+    if(isCorrect){
+      var luckyBtnL=document.getElementById('lucky-btn');
+      if(luckyBtnL){
+        var _cqL=q;
+        luckyBtnL.onclick=function(){markLucky(_cqL['ID'],_cqL);};
+        luckyBtnL.style.display='block';
+        luckyBtnL.disabled=false;
+        luckyBtnL.style.opacity='1';
+        luckyBtnL.innerHTML='🎲 ラッキー<br>正解';
+      }
+    }
     return;
   }
   if(isLastQ){
