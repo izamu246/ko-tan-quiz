@@ -396,7 +396,8 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
     <div style="font-size:40px;margin-bottom:10px;">🎯</div>
     <div style="font-family:'Noto Serif JP',serif;font-size:16px;font-weight:700;color:#0b4259;margin-bottom:10px;">苦手克服モード</div>
     <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:6px;">過去の間違えた問題を解き直します！</div>
-    <div style="font-size:13px;color:#0b4259;font-weight:700;margin-bottom:18px;">現在 <span id="nigate-modal-count">0</span>問 ストック中</div>
+    <div style="font-size:13px;color:#0b4259;font-weight:700;margin-bottom:4px;">現在 <span id="nigate-modal-count">0</span>問 ストック中</div>
+    <div style="font-size:12px;color:#777;margin-bottom:14px;">出題数：設定の <span id="nigate-modal-setcount">10</span>問（ストック超過時はランダム抽出）</div>
     <button onclick="_startNigateQuiz()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);color:white;border:none;border-radius:10px;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;">🎯 スタート！</button>
     <button onclick="document.getElementById('nigate-modal').style.display='none'" style="width:100%;padding:10px;background:transparent;border:1px solid #ddd;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">キャンセル</button>
   </div>
@@ -1095,6 +1096,17 @@ function startQuiz(){
     showToast('⏳ データ取得中です。しばらくお待ちください');
     return;
   }
+  // UIのactive状態からsettingsを同期（ずれ防止）
+  (function(){
+    var sb=document.querySelector('#subject-btns .btn-toggle.active');
+    if(sb)settings.subject=sb.dataset.val;
+    var ob=document.querySelector('#order-btns .btn-toggle.active');
+    if(ob)settings.order=ob.dataset.val;
+    var cb=document.querySelector('#count-btns .btn-toggle.active');
+    if(cb)settings.count=parseInt(cb.dataset.val);
+    var yb=document.querySelector('#year-btns .btn-toggle.active');
+    settings.yearRound=yb?yb.dataset.val:null;
+  })();
   discardResume();
   let pool=QUESTIONS.filter(q=>{
     if(settings.subject==='技術')return q['科目']&&q['科目'].includes('技術');
@@ -2284,6 +2296,11 @@ function startNigateMode(){
   var list=_getNigateList();
   if(!list.length){showToast('苦手問題がありません');return;}
   document.getElementById('nigate-modal-count').textContent=list.length;
+  // UIから現在の設定問題数を取得して表示
+  var cb=document.querySelector('#count-btns .btn-toggle.active');
+  var dispCount=cb?parseInt(cb.dataset.val):settings.count;
+  var sc=document.getElementById('nigate-modal-setcount');
+  if(sc)sc.textContent=dispCount;
   document.getElementById('nigate-modal').style.display='flex';
 }
 function _startNigateQuiz(){
@@ -2292,7 +2309,11 @@ function _startNigateQuiz(){
   var pool=QUESTIONS.filter(function(q){return list.includes(q['ID']);});
   if(!pool.length){showToast('問題データが見つかりません');return;}
   discardResume();
-  quizQueue=shuffle(pool);
+  // 設定の問題数を適用（ストック数より多い場合はストック全部）
+  var cb=document.querySelector('#count-btns .btn-toggle.active');
+  var useCount=cb?parseInt(cb.dataset.val):settings.count;
+  var shuffled=shuffle(pool);
+  quizQueue=shuffled.slice(0, Math.min(useCount, shuffled.length));
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=true;
   isNigateMode=true;
