@@ -1860,8 +1860,8 @@ function showResult(){
   document.getElementById('stat-correct').textContent=score;
   document.getElementById('stat-wrong').textContent=total-score;
   document.getElementById('stat-combo').textContent=maxCombo;
-  // 苦手克服モード・解き直しフェーズ以外は履歴保存
-  if(!isNigateMode&&!isHissuPhase){
+  // 苦手克服モード・解き直しフェーズ・解き直しモード以外は履歴保存
+  if(!isNigateMode&&!isHissuPhase&&!isRetryMode){
     saveHistory({date:new Date().toISOString(),score,total,pct,pass,subject:settings.subject});
   }
   discardResume();
