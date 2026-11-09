@@ -1498,8 +1498,7 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
     btnNext.style.display='block';
     return;
   }
-  // 解き直しフェーズ：正解したら苦手リストから削除
-  if(isHissuPhase&&isCorrect){_removeNigate(q['ID']);}
+  // 解き直しフェーズ：苦手フラグはそのまま維持（通常モードで正解したときに削除）
   const isLastQ=(currentIdx>=quizQueue.length-1);
   if(isLastQ&&isHissuPhase){
     btnNext.textContent='✅ 解き直し完了！';
