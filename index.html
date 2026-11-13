@@ -649,7 +649,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         </div>
         <div class="result-btns">
           <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度</button>
-          <button class="btn-retry" id="btn-retry-wrongs" onclick="retryWrongOnly()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">❌ 間違えた<span id="wrongs-count"></span>問だけ解き直す</button>
+
           <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';var _ht2=document.getElementById('hissu-home-toggle');if(_ht2){_ht2.style.pointerEvents='';_ht2.style.opacity='';}showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
@@ -1653,7 +1653,6 @@ function _showResultAfterHissu(){
   document.getElementById('stat-correct').textContent=_hissuOrigScore;
   document.getElementById('stat-wrong').textContent=_hissuOrigTotal-_hissuOrigScore;
   document.getElementById('stat-combo').textContent=_hissuOrigMaxCombo||0;
-  var wBtn=document.getElementById('btn-retry-wrongs');if(wBtn)wBtn.style.display='none';
 }
 
 function handleAbort(){
@@ -1870,13 +1869,6 @@ function showResult(){
     setTimeout(function(){startHissuPhase();},1500);
   }
   if(isHissuPhase){isHissuPhase=false;hissuWrongs=[];}
-  // 間違い解き直しボタン制御
-  const wrongCount=sessionResults.filter(r=>!r.correct).length;
-  const wBtn=document.getElementById('btn-retry-wrongs');
-  if(wBtn){
-    if(wrongCount>0){wBtn.style.display='block';wBtn.textContent='❌ 間違えた '+wrongCount+' 問だけ解き直す';}
-    else wBtn.style.display='none';
-  }
 }
 
 
