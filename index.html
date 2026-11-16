@@ -10,7 +10,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>工事担任者 デジタル第１級 過去問クイズ</title>
 <script>
-const _APP_VER='20261011';
+const _APP_VER='20261117';
+const _CHANGELOG=[
+  {ver:'20261117',title:'2026/11/17 アップデート',items:[
+    '解き直し必須モードのスイッチを廃止（クイズ終了後に「解き直し」ボタンで対応）',
+    'クイズ終了後に「終了（結果を見る）」「解き直し」の2択に変更',
+    '解き直しは間違い問題＋ラッキー正解した問題をまとめて出題',
+    '苦手問題の混入率を1割に調整',
+    '科目別累計学習時間を設定画面に表示',
+    'バージョンアップ通知・変更履歴機能を追加',
+  ]},
+];
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -570,12 +580,23 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         <div class="divider"></div>
         <button class="btn-start" id="btn-start-quiz" onclick="startQuiz()">▶ スタート</button>
         <button class="btn-start" id="btn-nigate" onclick="startNigateMode()" style="margin-top:10px;background:linear-gradient(135deg,#1a4a6b,#0ea5c8);box-shadow:0 4px 14px rgba(14,165,200,.35);">🎯 苦手克服モード（<span id="nigate-count">0</span>問）</button>
-        <div onclick="toggleHissuHome()" id="hissu-home-toggle" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;background:#f0f9ff;border:1px solid #7dd3fc;border-radius:8px;padding:8px 12px;cursor:pointer;">
-          <span style="font-size:11px;font-weight:700;color:#0b4259;">✅ 解き直し必須</span>
-          <label style="position:relative;display:inline-block;width:36px;height:20px;pointer-events:none;">
-            <span id="hissu-home-slider" style="position:absolute;inset:0;background:#ddd;border-radius:99px;transition:0.3s;"></span>
-            <span id="hissu-home-knob" style="position:absolute;left:2px;top:2px;width:16px;height:16px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
-          </label>
+        <!-- 累計学習時間 -->
+        <div style="margin-top:10px;background:#f0f9ff;border:1px solid #7dd3fc;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:9px;font-weight:700;color:#0b4259;letter-spacing:0.8px;margin-bottom:7px;">📚 累計学習時間</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(14,165,200,0.15);">
+              <div style="font-size:9px;color:#555;margin-bottom:3px;display:flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#1a4a6b;display:inline-block;"></span>技術</div>
+              <div id="study-time-tech" style="font-size:17px;font-weight:700;color:#1a1a1a;font-variant-numeric:tabular-nums;">0<span style="font-size:10px;font-weight:400;color:#888;margin-left:1px;">h</span> 00<span style="font-size:10px;font-weight:400;color:#888;margin-left:1px;">m</span></div>
+            </div>
+            <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(14,165,200,0.15);">
+              <div style="font-size:9px;color:#555;margin-bottom:3px;display:flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#2d6a2d;display:inline-block;"></span>法規</div>
+              <div id="study-time-hoki" style="font-size:17px;font-weight:700;color:#1a1a1a;font-variant-numeric:tabular-nums;">0<span style="font-size:10px;font-weight:400;color:#888;margin-left:1px;">h</span> 00<span style="font-size:10px;font-weight:400;color:#888;margin-left:1px;">m</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- 変更履歴ボタン -->
+        <div style="margin-top:8px;text-align:right;">
+          <button onclick="showChangelog()" style="font-size:9px;color:#888;background:none;border:1px solid #ddd;border-radius:4px;padding:3px 8px;cursor:pointer;">📋 変更履歴</button>
         </div>
         </div><!-- /setup-area -->
 
@@ -648,9 +669,9 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
           <div class="stat-box"><div class="stat-val" id="stat-combo">0</div><div class="stat-key">最大連続</div></div>
         </div>
         <div class="result-btns">
-          <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度</button>
-
-          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';var _ht2=document.getElementById('hissu-home-toggle');if(_ht2){_ht2.style.pointerEvents='';_ht2.style.opacity='';}showScreen('screen-setup')">⚙ 設定に戻る</button>
+          <button class="btn-retry" id="btn-retry-hissu" onclick="startHissuRetry()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">🔄 解き直す（<span id="hissu-retry-count">0</span>問）</button>
+          <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度（同じ設定）</button>
+          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
     </div>
@@ -877,7 +898,147 @@ document.addEventListener('DOMContentLoaded',()=>{
   initKiraEffect();
   autoRefreshData();
   _initNickname();
+  _initStudyTimer();
+  _updateStudyTimeUI();
+  _initVersionNotice();
 });
+
+// ===== 累計学習時間 =====
+var _studyTimerInterval=null;
+var _studyTimerLastActive=Date.now();
+var _studyTimerActive=false;
+var _STUDY_IDLE_MS=5*60*1000; // 5分無操作で停止
+
+function _getStudySeconds(subject){
+  try{return parseInt(localStorage.getItem('_studyTime_'+subject)||'0',10)||0;}catch(e){return 0;}
+}
+function _addStudySeconds(subject, secs){
+  if(!secs||secs<=0)return;
+  try{
+    var cur=_getStudySeconds(subject);
+    localStorage.setItem('_studyTime_'+subject, String(cur+secs));
+  }catch(e){}
+}
+function _currentStudySubject(){
+  // クイズ中は実際の科目を、設定画面は選択中の科目を使う
+  if(!quizQueue||!quizQueue.length){
+    var sb=document.querySelector('#subject-btns .btn-toggle.active');
+    return sb?sb.dataset.val:'技術';
+  }
+  var sub=settings.subject||'技術';
+  return sub;
+}
+function _studyTimerTick(){
+  if(!_studyTimerActive)return;
+  var now=Date.now();
+  var elapsed=now-_studyTimerLastActive;
+  if(elapsed>_STUDY_IDLE_MS){
+    // 5分以上無操作 → 停止
+    _studyTimerActive=false;
+    return;
+  }
+  // 1秒分加算
+  var sub=_currentStudySubject();
+  if(sub==='両方'){
+    _addStudySeconds('技術',0.5);
+    _addStudySeconds('法規',0.5);
+  }else{
+    _addStudySeconds(sub,1);
+  }
+  _updateStudyTimeUI();
+}
+function _studyTimerPokeActive(){
+  _studyTimerLastActive=Date.now();
+  _studyTimerActive=true;
+}
+function _initStudyTimer(){
+  _studyTimerInterval=setInterval(_studyTimerTick,1000);
+  // ユーザー操作で活性化
+  ['click','touchstart','keydown','scroll'].forEach(function(ev){
+    document.addEventListener(ev,_studyTimerPokeActive,{passive:true});
+  });
+  // 非アクティブ時停止
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden)_studyTimerActive=false;
+    else _studyTimerPokeActive();
+  });
+  _studyTimerPokeActive();
+}
+function _fmtStudyTime(secs){
+  var h=Math.floor(secs/3600);
+  var m=Math.floor((secs%3600)/60);
+  return h+'<span style="font-size:10px;font-weight:400;color:#888;margin-left:1px;">h</span> '
+    +(m<10?'0':'')+m+'<span style="font-size:10px;font-weight:400;color:#888;margin-left:1px;">m</span>';
+}
+function _updateStudyTimeUI(){
+  var t=document.getElementById('study-time-tech');
+  var h=document.getElementById('study-time-hoki');
+  if(t)t.innerHTML=_fmtStudyTime(_getStudySeconds('技術'));
+  if(h)h.innerHTML=_fmtStudyTime(_getStudySeconds('法規'));
+}
+
+// ===== バージョン通知 =====
+function _initVersionNotice(){
+  try{
+    var saved=localStorage.getItem('_appVerSeen')||'';
+    if(saved===_APP_VER)return;
+    // 初回または新バージョン → 通知表示
+    _showVersionNotice();
+  }catch(e){}
+}
+function _showVersionNotice(){
+  var overlay=document.getElementById('version-notice-overlay');
+  if(!overlay){
+    // 動的生成
+    overlay=document.createElement('div');
+    overlay.id='version-notice-overlay';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    var box=document.createElement('div');
+    box.style.cssText='background:#fff;border-radius:16px;max-width:360px;width:100%;padding:20px;max-height:80vh;overflow-y:auto;';
+    // 内容
+    var html='<div style="font-size:11px;font-weight:700;color:#c0392b;letter-spacing:0.8px;margin-bottom:4px;">🎉 アップデート</div>';
+    html+='<div style="font-size:14px;font-weight:700;margin-bottom:14px;">'+(_CHANGELOG[0]&&_CHANGELOG[0].title||'新バージョン')+'</div>';
+    html+='<ul style="font-size:12px;line-height:1.9;margin:0 0 16px 16px;color:#333;">';
+    var items=_CHANGELOG[0]&&_CHANGELOG[0].items||[];
+    items.forEach(function(it){html+='<li>'+it+'</li>';});
+    html+='</ul>';
+    html+='<button onclick="_closeVersionNotice()" style="width:100%;padding:12px;background:linear-gradient(135deg,#c0392b,#e8380d);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">OK</button>';
+    box.innerHTML=html;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  }else{
+    overlay.style.display='flex';
+  }
+}
+function _closeVersionNotice(){
+  var overlay=document.getElementById('version-notice-overlay');
+  if(overlay)overlay.style.display='none';
+  try{localStorage.setItem('_appVerSeen',_APP_VER);}catch(e){}
+}
+function showChangelog(){
+  // 変更履歴モーダル
+  var overlay=document.getElementById('changelog-overlay');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='changelog-overlay';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    var box=document.createElement('div');
+    box.style.cssText='background:#fff;border-radius:16px;max-width:360px;width:100%;padding:20px;max-height:80vh;overflow-y:auto;';
+    var html='<div style="font-size:14px;font-weight:700;margin-bottom:14px;">📋 変更履歴</div>';
+    _CHANGELOG.forEach(function(log){
+      html+='<div style="font-size:11px;font-weight:700;color:#c0392b;margin:10px 0 4px;">'+log.title+'</div>';
+      html+='<ul style="font-size:12px;line-height:1.9;margin:0 0 8px 16px;color:#333;">';
+      (log.items||[]).forEach(function(it){html+='<li>'+it+'</li>';});
+      html+='</ul>';
+    });
+    html+='<button onclick="document.getElementById(\'changelog-overlay\').style.display=\'none\'" style="width:100%;padding:12px;background:#333;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;">閉じる</button>';
+    box.innerHTML=html;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  }else{
+    overlay.style.display='flex';
+  }
+}
 
 // ステータスバー制御
 function setStatusBar(show, msg, pct, done, error){
@@ -1148,7 +1309,7 @@ function startQuiz(){
   isRetryMode=false;
   isNigateMode=false;
   isHissuPhase=false;
-  hissuWrongs=[];
+  hissuWrongs=[];_luckyWrongs=[];
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
@@ -1198,7 +1359,8 @@ function retryQuiz(){
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=false;
   isNigateMode=false;
-  // スイッチ状態を維持（isKaerema10Modeはそのまま）
+  isHissuPhase=false;
+  hissuWrongs=[];_luckyWrongs=[];
   setHistoryTabEnabled(false);
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
@@ -1239,23 +1401,10 @@ var _hissuOrigPass=false;
 var _hissuOrigSubject='';
 var _hissuOrigMaxCombo=0;
 
-var isHissuMode=false;
+var isHissuMode=true; // 常時ON（スイッチ廃止）
 var hissuWrongs=[];
 var isHissuPhase=false;
-
-function toggleHissuHome(){
-  isHissuMode=!isHissuMode;
-  var slider=document.getElementById('hissu-home-slider');
-  var knob=document.getElementById('hissu-home-knob');
-  var toggle=document.getElementById('hissu-home-toggle');
-  if(isHissuMode){
-    if(slider){slider.style.background='#0ea5c8';knob.style.left='22px';}
-    if(toggle){toggle.style.background='#e0f7ff';toggle.style.borderColor='#0ea5c8';}
-  }else{
-    if(slider){slider.style.background='#ddd';knob.style.left='2px';}
-    if(toggle){toggle.style.background='#f0f9ff';toggle.style.borderColor='#7dd3fc';}
-  }
-}
+var _luckyWrongs=[]; // ラッキー正解した問題
 
 function startHissuPhase(){
   if(!hissuWrongs.length) return;
@@ -1319,6 +1468,28 @@ function startHissuPhase(){
   }
 }
 
+// 解き直しボタン：間違い+ラッキー正解をまとめて解き直す
+function startHissuRetry(){
+  var retryPool=[...hissuWrongs,..._luckyWrongs.filter(function(q){
+    return !hissuWrongs.find(function(w){return w['ID']===q['ID'];});
+  })];
+  if(!retryPool.length){showToast('解き直す問題がありません');return;}
+  discardResume();
+  quizQueue=shuffle(retryPool);
+  currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
+  hissuWrongs=[];_luckyWrongs=[];
+  isRetryMode=true;isNigateMode=false;isHissuPhase=false;
+  setHistoryTabEnabled(false);
+  document.getElementById('site-header').style.display='none';
+  document.getElementById('nav-tabs').style.display='none';
+  var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
+  var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
+  var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
+  _stopPeriodicMsg();
+  showScreen('screen-setup');
+  renderQuestion();
+}
+
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
 // くじ引き式出題：箱から引いて戻さない。空になったら補充
@@ -1327,8 +1498,8 @@ function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.fl
 function mixNigateQuestions(baseQueue, pool, totalCount){
   var nigateList=_getNigateList();
   if(!nigateList.length) return baseQueue;
-  // 混入数：1割（最低1問、最大totalCountの2割）
-  var mixCount=Math.max(1, Math.min(Math.floor(totalCount*0.15), Math.floor(totalCount*0.2)));
+  // 混入数：1割（最低1問）
+  var mixCount=Math.max(1, Math.floor(totalCount*0.1));
   // 苦手問題をpoolから抽出
   var nigatePool=pool.filter(function(q){return nigateList.indexOf(q['ID'])>=0;});
   if(!nigatePool.length) return baseQueue;
@@ -1506,31 +1677,6 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
     btnNext.style.display='block';
     return;
   }
-  if(isLastQ&&isHissuMode&&!isHissuPhase&&!isRetryMode&&!isNigateMode){
-    // 解き直し必須モード：結果スキップして即解き直し or 全問正解なら結果表示
-    if(hissuWrongs.length>0){
-      btnNext.textContent='🔄 解き直し開始';
-      btnNext.onclick=function(){ startHissuPhase(); };
-    } else {
-      // 全問正解：そのまま結果表示
-      btnNext.textContent='📊 結果を見る';
-      btnNext.onclick=function(){ startEvaOrResult(); };
-    }
-    btnNext.style.display='block';
-    // ラッキー正解ボタン（最終問題・解き直し必須モード）
-    if(isCorrect){
-      var luckyBtnL=document.getElementById('lucky-btn');
-      if(luckyBtnL){
-        var _cqL=q;
-        luckyBtnL.onclick=function(){markLucky(_cqL['ID'],_cqL);};
-        luckyBtnL.style.display='block';
-        luckyBtnL.disabled=false;
-        luckyBtnL.style.opacity='1';
-        luckyBtnL.innerHTML='🎲 ラッキー<br>正解';
-      }
-    }
-    return;
-  }
   if(isLastQ){
     btnNext.textContent='📊 結果を見る';
     btnNext.onclick=function(){ startEvaOrResult(); };
@@ -1589,7 +1735,9 @@ function renderExplanation(q, correctNum, isCorrect){
 function markLucky(id, q){
   _addNigate(id);
   // 解き直し必須モード中なら解き直し対象にも追加
-  if(isHissuMode&&!isRetryMode&&q){
+  // ラッキー正解：解き直し対象リストに追加
+  if(!isRetryMode&&q){
+    if(!_luckyWrongs.find(function(w){return w['ID']===id;})){_luckyWrongs.push(q);}
     if(!hissuWrongs.find(function(w){return w['ID']===id;})){hissuWrongs.push(q);}
   }
   showToast('📌 苦手リストに追加しました');
@@ -1613,8 +1761,6 @@ function showHissuComplete(){
       overlay.style.display='none';
       isHissuPhase=false;
       hissuWrongs=[];
-      var _ht=document.getElementById('hissu-home-toggle');
-      if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
       // 通常結果画面を表示（スコアは最初の10問のもの）
       _showResultAfterHissu();
     },2500);
@@ -1637,8 +1783,6 @@ function _showResultAfterHissu(){
   document.getElementById('nav-tabs').style.display='';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
-  var _ht=document.getElementById('hissu-home-toggle');
-  if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
   showScreen('screen-result');
   // 結果画面の表示を更新
   document.getElementById('score-pct').textContent=_hissuOrigPct+'%';
@@ -1653,6 +1797,7 @@ function _showResultAfterHissu(){
   document.getElementById('stat-correct').textContent=_hissuOrigScore;
   document.getElementById('stat-wrong').textContent=_hissuOrigTotal-_hissuOrigScore;
   document.getElementById('stat-combo').textContent=_hissuOrigMaxCombo||0;
+  var wBtn=document.getElementById('btn-retry-wrongs');if(wBtn)wBtn.style.display='none';
 }
 
 function handleAbort(){
@@ -1706,7 +1851,6 @@ function confirmAbort(){
     document.getElementById('nav-tabs').style.display='';
     var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='';
     var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='none';
-    var _ht=document.getElementById('hissu-home-toggle');if(_ht){_ht.style.pointerEvents='';_ht.style.opacity='';}
     showScreen('screen-setup');
     checkResumeBanner();
   });
@@ -1745,9 +1889,6 @@ function resumeQuiz(){
   score=d.score;combo=d.combo;maxCombo=d.maxCombo;
   sessionResults=d.sessionResults||[];settings=d.settings||settings;
   setHistoryTabEnabled(false);
-  // 再開時はスイッチを無効化
-  var ht=document.getElementById('hissu-home-toggle');
-  if(ht){ht.style.pointerEvents='none';ht.style.opacity='0.4';}
   document.getElementById('site-header').style.display='none';
   document.getElementById('nav-tabs').style.display='none';
   var _sa=document.getElementById('setup-area');if(_sa)_sa.style.display='none';
@@ -1863,12 +2004,24 @@ function showResult(){
     saveHistory({date:new Date().toISOString(),score,total,pct,pass,subject:settings.subject});
   }
   discardResume();
-  // 解き直し必須モード：通常フェーズ後に自動で解き直しフェーズへ
-  // 解き直しフェーズの結果は履歴保存しない
-  if(isHissuMode&&!isHissuPhase&&!isRetryMode&&!isNigateMode&&hissuWrongs.length>0){
-    setTimeout(function(){startHissuPhase();},1500);
-  }
+  var _wasHissu=isHissuPhase;
   if(isHissuPhase){isHissuPhase=false;hissuWrongs=[];}
+  // 解き直しボタン制御（間違い＋ラッキー正解）
+  var rBtn=document.getElementById('btn-retry-hissu');
+  if(rBtn){
+    if(!isRetryMode&&!isNigateMode&&!_wasHissu){
+      var retryPool=[...hissuWrongs,..._luckyWrongs.filter(function(q){return !hissuWrongs.find(function(w){return w['ID']===q['ID'];});})];
+      var rCount=document.getElementById('hissu-retry-count');
+      if(retryPool.length>0){
+        rBtn.style.display='block';
+        if(rCount)rCount.textContent=retryPool.length;
+      } else {
+        rBtn.style.display='none';
+      }
+    } else {
+      rBtn.style.display='none';
+    }
+  }
 }
 
 
