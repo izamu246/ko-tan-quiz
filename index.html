@@ -1679,7 +1679,7 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
   }
   if(isLastQ){
     btnNext.textContent='📊 結果を見る';
-    btnNext.onclick=function(){ startEvaOrResult(); };
+    btnNext.onclick=function(){ _showFinishChoice(); };
   }else{
     btnNext.textContent='次の問題 →';
     btnNext.onclick=nextQuestion;
@@ -2043,6 +2043,42 @@ var _kanjiNums = ['','壱','弐','参','肆','伍','陸','漆','捌','玖',
 function _toEpisode(n){
   if(n<=99) return '第'+_kanjiNums[n]+'話';
   return '第'+n+'話';
+}
+
+// クイズ終了後の選択ダイアログ
+function _showFinishChoice(){
+  var retryPool=[...hissuWrongs,..._luckyWrongs.filter(function(q){
+    return !hissuWrongs.find(function(w){return w['ID']===q['ID'];});
+  })];
+  var overlay=document.getElementById('finish-choice-overlay');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='finish-choice-overlay';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9998;display:flex;align-items:flex-end;justify-content:center;padding-bottom:max(20px,env(safe-area-inset-bottom,0px));';
+    document.body.appendChild(overlay);
+  }
+  var retryLabel=retryPool.length>0
+    ? '🔄 解き直す（'+retryPool.length+'問）'
+    : '🔄 解き直す（なし）';
+  overlay.innerHTML='<div style="background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:480px;padding:20px 16px;">'
+    +'<div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:4px;">クイズ終了</div>'
+    +'<div style="text-align:center;font-size:12px;color:#888;margin-bottom:18px;">どうしますか？</div>'
+    +(retryPool.length>0
+      ? '<button onclick="_finishChoiceRetry()" style="display:block;width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:12px;background:linear-gradient(135deg,#7c2d12,#dc2626);color:white;font-size:14px;font-weight:700;cursor:pointer;">'+retryLabel+'</button>'
+      : '')
+    +'<button onclick="_finishChoiceResult()" style="display:block;width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#0b4259,#0ea5c8);color:white;font-size:14px;font-weight:700;cursor:pointer;">📊 結果を見る</button>'
+    +'</div>';
+  overlay.style.display='flex';
+}
+function _finishChoiceResult(){
+  var el=document.getElementById('finish-choice-overlay');
+  if(el)el.style.display='none';
+  startEvaOrResult();
+}
+function _finishChoiceRetry(){
+  var el=document.getElementById('finish-choice-overlay');
+  if(el)el.style.display='none';
+  startHissuRetry();
 }
 
 function startEvaOrResult(){
