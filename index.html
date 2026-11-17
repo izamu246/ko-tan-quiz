@@ -1678,24 +1678,32 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
   saveResume();
   const btnNext=document.getElementById('btn-next');
 
-  // 解き直し必須フェーズ：不正解は同じ問題を繰り返す
+  // 解き直し必須フェーズ：不正解はhissuWrongsに追加して次へ進む
   if(isHissuPhase&&!isCorrect){
-    btnNext.textContent='😤 もう一度！';
-    btnNext.onclick=function(){
-      answered=false;
-      document.getElementById('explanation-area').innerHTML='';
-      btnNext.style.display='none';
-      window.scrollTo(0,0);
-      renderQuestion();
-    };
-    btnNext.style.display='block';
-    return;
+    if(!hissuWrongs.find(function(w){return w['ID']===q['ID'];})){
+      hissuWrongs.push(q);
+    }
   }
   // 解き直しフェーズ：苦手フラグはそのまま維持（通常モードで正解したときに削除）
   const isLastQ=(currentIdx>=quizQueue.length-1);
   if(isLastQ&&isHissuPhase){
-    btnNext.textContent='✅ 解き直し完了！';
-    btnNext.onclick=function(){ showHissuComplete(); };
+    if(hissuWrongs.length>0){
+      // まだ間違えた問題がある→再出題ループ
+      btnNext.textContent='😤 間違えた'+hissuWrongs.length+'問を再挑戦！';
+      btnNext.onclick=function(){
+        answered=false;
+        quizQueue=shuffle(hissuWrongs.slice());
+        hissuWrongs=[];
+        currentIdx=0;
+        document.getElementById('explanation-area').innerHTML='';
+        btnNext.style.display='none';
+        window.scrollTo(0,0);
+        renderQuestion();
+      };
+    } else {
+      btnNext.textContent='✅ 解き直し完了！';
+      btnNext.onclick=function(){ showHissuComplete(); };
+    }
     btnNext.style.display='block';
     return;
   }
