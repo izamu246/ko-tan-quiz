@@ -1474,6 +1474,13 @@ function startHissuRetry(){
     return !hissuWrongs.find(function(w){return w['ID']===q['ID'];});
   })];
   if(!retryPool.length){showToast('解き直す問題がありません');return;}
+  // 元のスコアを保存（解き直し後の結果表示で使う）
+  _hissuOrigScore=score;
+  _hissuOrigTotal=quizQueue.length;
+  _hissuOrigPct=Math.round(score/quizQueue.length*100);
+  _hissuOrigPass=_hissuOrigPct>=60;
+  _hissuOrigSubject=settings.subject;
+  _hissuOrigMaxCombo=maxCombo;
   discardResume();
   quizQueue=shuffle(retryPool);
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
