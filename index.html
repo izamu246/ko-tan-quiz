@@ -1784,8 +1784,9 @@ function showHissuComplete(){
 }
 
 function _showResultAfterHissu(){
-  // 解き直し必須フェーズ後は履歴保存しない（通常フェーズ完了時に保存済み）
-  // 結果画面の値を元の10問スコアに戻す
+  // 元のスコアで履歴保存
+  saveHistory({date:new Date().toISOString(),score:_hissuOrigScore,total:_hissuOrigTotal,pct:_hissuOrigPct,pass:_hissuOrigPass,subject:_hissuOrigSubject});
+  // 結果画面の値を元のスコアに戻す
   score=_hissuOrigScore;
   var total=_hissuOrigTotal;
   var pct=_hissuOrigPct;
