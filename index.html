@@ -1196,6 +1196,7 @@ function buildYearButtons(){
     const b=document.createElement('button');b.className='btn-toggle';b.dataset.val=y+'_'+r;
     b.textContent=y+'年 第'+r+'回';b.onclick=()=>selectBtn(b,'year-btns');wrap.appendChild(b);
   });
+  _updateNigateBtn();
 }
 
 function updateCount50(){
@@ -2508,6 +2509,7 @@ function _updateNigateBtn(){
 function startNigateMode(){
   var list=_getNigateList();
   if(!list.length){showToast('苦手問題がありません');return;}
+  _updateNigateBtn();
   document.getElementById('nigate-modal-count').textContent=list.length;
   // UIから現在の設定問題数を取得して表示
   var cb=document.querySelector('#count-btns .btn-toggle.active');
