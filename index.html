@@ -1679,7 +1679,12 @@ function selectAnswer(btn,choiceIdx,q,displayCorrectNum){
   }
   if(isLastQ){
     btnNext.textContent='📊 結果を見る';
-    btnNext.onclick=function(){ _showFinishChoice(); };
+    // 解き直しモード・苦手克服モードは直接結果画面へ（中間選択不要）
+    if(isRetryMode||isNigateMode){
+      btnNext.onclick=function(){ startEvaOrResult(); };
+    } else {
+      btnNext.onclick=function(){ _showFinishChoice(); };
+    }
   }else{
     btnNext.textContent='次の問題 →';
     btnNext.onclick=nextQuestion;
