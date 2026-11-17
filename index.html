@@ -2007,8 +2007,8 @@ function initKiraEffect(){
 
 // ===== RESULT =====
 function showResult(){
-  // 解き直しモード終了時は元のスコアで結果表示
-  if(isRetryMode){
+  // 解き直しモード終了時は元のスコアで結果表示（苦手克服モードは除く）
+  if(isRetryMode&&!isNigateMode){
     isRetryMode=false;
     _showResultAfterHissu();
     return;
