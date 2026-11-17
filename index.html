@@ -1548,6 +1548,14 @@ function lotteryDraw(pool, count, storageKey){
 
 // ===== RENDER QUESTION =====
 function renderQuestion(){
+  if(!quizQueue||!quizQueue.length||currentIdx>=quizQueue.length){
+    showToast('問題がありません');
+    setHistoryTabEnabled(true);
+    document.getElementById('site-header').style.display='';
+    document.getElementById('nav-tabs').style.display='';
+    showScreen('screen-setup');
+    return;
+  }
   const q=quizQueue[currentIdx];answered=false;
   const pct=(currentIdx/quizQueue.length)*100;
   document.getElementById('progress-fill').style.width=pct+'%';
