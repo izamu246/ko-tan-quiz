@@ -1493,7 +1493,12 @@ function startHissuRetry(){
   var _qa=document.getElementById('quiz-area');if(_qa)_qa.style.display='block';
   var _rb=document.getElementById('resume-banner');if(_rb)_rb.style.display='none';
   _stopPeriodicMsg();
-  showScreen('screen-setup');
+  // 前の問題コンテンツをクリア
+  var ea=document.getElementById('explanation-area');if(ea)ea.innerHTML='';
+  var bn=document.getElementById('btn-next');if(bn){bn.style.display='none';}
+  var lb=document.getElementById('lucky-btn');if(lb)lb.style.display='none';
+  window.scrollTo(0,0);
+  showScreen('screen-quiz');
   renderQuestion();
 }
 
