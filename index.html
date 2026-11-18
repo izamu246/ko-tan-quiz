@@ -671,7 +671,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         <div class="result-btns">
           <button class="btn-retry" id="btn-retry-hissu" onclick="startHissuRetry()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">🔄 解き直す（<span id="hissu-retry-count">0</span>問）</button>
           <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度（同じ設定）</button>
-          <button class="btn-start" onclick="isNigateMode=false;isRetryMode=false;isHissuPhase=false;document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
+          <button class="btn-start" onclick="isNigateMode=false;isRetryMode=false;isHissuPhase=false;quizQueue=[];currentIdx=0;answered=false;document.getElementById('quiz-area').style.display='none';document.getElementById('setup-area').style.display='';document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
     </div>
