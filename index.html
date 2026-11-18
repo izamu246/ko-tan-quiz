@@ -671,7 +671,7 @@ header{background:linear-gradient(135deg,#0a2a38 0%,#0b4259 50%,#0a2a38 100%);co
         <div class="result-btns">
           <button class="btn-retry" id="btn-retry-hissu" onclick="startHissuRetry()" style="display:none;background:linear-gradient(135deg,#7c2d12,#dc2626);box-shadow:0 4px 14px rgba(220,38,38,.35);">🔄 解き直す（<span id="hissu-retry-count">0</span>問）</button>
           <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度（同じ設定）</button>
-          <button class="btn-start" onclick="document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
+          <button class="btn-start" onclick="isNigateMode=false;isRetryMode=false;isHissuPhase=false;document.getElementById('site-header').style.display='';document.getElementById('nav-tabs').style.display='';showScreen('screen-setup')">⚙ 設定に戻る</button>
         </div>
       </div>
     </div>
@@ -1292,7 +1292,7 @@ function startQuiz(){
   }else if(settings.order==='year'&&settings.yearRound){
     // 年度指定ランダム：その年度内でくじ引き式
     const boxKey='_lotteryBox_yr_'+settings.yearRound+'_'+settings.subject;
-    quizQueue=lotteryDraw(pool, settings.count, boxKey);
+    quizQueue=mixNigateQuestions(lotteryDraw(pool, settings.count, boxKey), pool, settings.count);
   }else if(settings.subject==='両方'){
     // 両方科目：技術・法規それぞれの箱から引く
     const gPool=pool.filter(q=>q['科目']&&q['科目'].includes('技術'));
@@ -1301,11 +1301,11 @@ function startQuiz(){
     const rem=settings.count%2;
     const gPick=lotteryDraw(gPool, half+(rem===1?1:0), '_lotteryBox_gijutsu');
     const hPick=lotteryDraw(hPool, half, '_lotteryBox_hoki');
-    quizQueue=shuffle([...gPick,...hPick]);
+    quizQueue=mixNigateQuestions(shuffle([...gPick,...hPick]), pool, settings.count);
   }else{
-    // 単科目ランダム：くじ引き式
+    // 単科目ランダム：くじ引き式＋苦手1割混入
     const boxKey='_lotteryBox_'+settings.subject;
-    quizQueue=lotteryDraw(pool, settings.count, boxKey);
+    quizQueue=mixNigateQuestions(lotteryDraw(pool, settings.count, boxKey), pool, settings.count);
   }
   currentIdx=0;score=0;combo=0;maxCombo=0;sessionResults=[];
   isRetryMode=false;
@@ -1535,11 +1535,11 @@ function lotteryDraw(pool, count, storageKey){
       box=parsed.filter(id=>allIds.includes(id));
     }
   }catch(e){}
-  const result=[];
-  while(result.length<count){
-    if(!box.length) box=shuffle(allIds);
-    result.push(box.shift());
+  // 箱が空か残りがcount未満なら新たにシャッフルして補充
+  if(box.length<count){
+    box=shuffle(allIds);
   }
+  const result=box.splice(0,count);
   try{localStorage.setItem(storageKey,JSON.stringify(box));}catch(e){}
   const idToQ={};
   pool.forEach(q=>{idToQ[q['ID']]=q;});
@@ -2023,6 +2023,8 @@ function showResult(){
     _showResultAfterHissu();
     return;
   }
+  isNigateMode=false;
+  isRetryMode=false;
   setHistoryTabEnabled(true);
   document.getElementById('site-header').style.display='';
   document.getElementById('nav-tabs').style.display='';
